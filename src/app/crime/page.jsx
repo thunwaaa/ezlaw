@@ -1,11 +1,10 @@
 import React from 'react'
 
+
 function Lawcate() {
-  return (
-    <div>
-      law
-    </div>
-  )
+  return(
+    <div>Lawcate</div>
+  );
 }
 
 export default Lawcate
