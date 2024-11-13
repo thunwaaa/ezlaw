@@ -1,6 +1,17 @@
 import localFont from "next/font/local";
+import { Playfair_Display, Noto_Sans_Thai } from 'next/font/google'
 import "./globals.css";
-import NavBar from "./components/ืnavbar/NavBar";
+import NavBar from "./components/navbar/NavBar";
+
+const playfair_display = Playfair_Display({
+  subsets: ['latin','latin-ext'],
+  weight: ['400','700'],
+})
+
+const noto_sans_thai = Noto_Sans_Thai({
+  subsets: ['latin','latin-ext','thai'],
+  weight: ['300', '400', '500', '600'],
+})
 
 
 const geistSans = localFont({
@@ -23,7 +34,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${noto_sans_thai.className} antialiased`}
       >
         <header>
           <NavBar />

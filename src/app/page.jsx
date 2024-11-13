@@ -1,10 +1,12 @@
 import Link from "next/link";
+import Content1 from "./components/Content1";
 
 
 export default function Home() {
   return (
     <div>
-      kub
+      <Content1 />
+      
       
 
     </div>
