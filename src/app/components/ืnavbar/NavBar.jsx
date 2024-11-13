@@ -1,12 +1,10 @@
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { Icon } from "lucide-react";
 import { NavigationMenu, NavigationMenuContent,
   NavigationMenuItem,NavigationMenuList,NavigationMenuTrigger } from "@/components/ui/navigation-menu";
+import AuthButton from "../AuthButton";
 
 
-
-function NavBar() {
+export function NavBar() {
   return (
     <div className="flex justify-between mx-8 my-4 items-center">
         <h1 className="flex justify-start text-3xl">EZLAW</h1>
@@ -34,11 +32,15 @@ function NavBar() {
             </NavigationMenuItem>
             <NavigationMenuItem>
                 <Link href='/consult' className=" border border-solid border-slate-950 
-                rounded-full p-2 hover:text-slate-500
+                rounded-full px-3 py-1 hover:text-slate-500 
                 hover:border-slate-500 transition duration-300">
                     ปรึกษาทนาย
                 </Link>
-            </NavigationMenuItem>  
+            </NavigationMenuItem> 
+            <NavigationMenuItem>
+                <AuthButton className ="flex items-center" />
+            </NavigationMenuItem>
+             
         </NavigationMenuList>
         </NavigationMenu>
         
