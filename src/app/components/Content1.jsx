@@ -18,10 +18,10 @@ export const Content1 = () => {
     <>
     <section className='bg-indigo-300 rounded-[52px] mx-20 mt-10 h-[500px]'>
         <div className='absolute w-[421px] h-[180px] left-[170px] top-[220px]'>
-            <h1 className='font-extrabold text-6xl text-left pl-10 leading-[90px]'>ทำกฎหมายให้เป็นเรื่องง่าย!</h1>
+            <h1 className='font-black text-6xl text-left pl-10 leading-[90px] '>ทำกฎหมายให้เป็นเรื่องง่าย!</h1>
         </div>
         <div className='pl-24 pt-80'>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className='ml-10'>
               <input
                 type='text'
@@ -48,13 +48,13 @@ export const Content1 = () => {
                     width={400}
                     height={400}
                     alt="picture"
-                    className='absolute ml-96 right-[420] top-[200]'
+                    className='absolute ml-96 right-[490] top-[200]'
                 />
             </div>
-            <div className='absolute w-[232px] h-[62px] right-[200px] top-[230px] bg-blue-500 rounded-[31px]'></div>
-            <div className='absolute w-[200px] h-[51px] left-[1000px] top-[202px] bg-blue-500 rounded-[31px]'></div>
-            <div className='absolute w-[149px] h-[58px] left-[850px] top-[425px] bg-blue-500 rounded-[31px]'></div>
-            <div className='absolute w-[149px] h-[58px] left-[1650px] top-[450px] bg-blue-500 rounded-[31px]'></div>
+            <div className='absolute w-[232px] h-[62px] right-[300px] top-[230px] bg-blue-500 rounded-[31px]'></div>
+            <div className='absolute w-[200px] h-[51px] right-[850px] top-[202px] bg-blue-500 rounded-[31px]'></div>
+            <div className='absolute w-[149px] h-[58px] right-[200px] top-[415px] bg-blue-500 rounded-[31px]'></div>
+            <div className='absolute w-[139px] h-[55px] right-[950px] top-[450px] bg-blue-500 rounded-[31px]'></div>
         </div>
     </section>
     <div className='text-center my-5'>
