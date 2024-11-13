@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div>
       <Content1 />
-      kub
+      
       
 
     </div>

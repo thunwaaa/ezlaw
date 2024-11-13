@@ -2,16 +2,25 @@ import Link from "next/link";
 import { NavigationMenu, NavigationMenuContent,
   NavigationMenuItem,NavigationMenuList,NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import AuthButton from "../AuthButton";
+import Image from "next/image";
+import { Playfair_Display } from "next/font/google";
+
+const playfair_display = Playfair_Display({
+    subsets: ['latin','latin-ext'],
+    weight: ['400','700'],
+})
 
 
 export function NavBar() {
   return (
     <div className="flex justify-between mx-8 my-4 items-center">
-        <h1 className="flex justify-start text-3xl">EZLAW</h1>
-        <NavigationMenu className="flex justify-end text-xl">
+        <div className="flex justify-start text-4xl font-extrabold text-red-900">
+            <h1 className={playfair_display.className}>EZLAW</h1>
+        </div>
+        <NavigationMenu className="flex justify-end text-lg ">
         <NavigationMenuList>
             <NavigationMenuItem>
-                <Link href='/'>HOME</Link>
+                <Link href='/' className="font-semibold">HOME</Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
                 <NavigationMenuTrigger className = 'flex items-center py-5 text-xl  hover:text-slate-500 transition duration-300'>กฏหมาย</NavigationMenuTrigger>
@@ -30,10 +39,14 @@ export function NavBar() {
                     </ul>
                 </NavigationMenuContent>
             </NavigationMenuItem>
+            
             <NavigationMenuItem>
+                <Image src='/crownIcon.png' width={25} height={30} alt="Icon" className="absolute -top-3 right-52 "/>
+                
                 <Link href='/consult' className=" border border-solid border-slate-950 
-                rounded-full px-3 py-1 hover:text-slate-500 
+                rounded-full px-3 py-1 font-semibold hover:text-slate-500 
                 hover:border-slate-500 transition duration-300">
+                    
                     ปรึกษาทนาย
                 </Link>
             </NavigationMenuItem> 

@@ -1,14 +1,19 @@
 "use client"
-
 import { useState } from 'react'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { X } from 'lucide-react'
 import { useToast } from 'hooks/use-toast'
 import Link from 'next/link'
+import axios from 'axios'
+import { Playfair_Display } from 'next/font/google'
+
+const playfair_display = Playfair_Display({
+    subsets: ['latin','latin-ext'],
+    weight: ['400','700'],
+})
 
 
 
@@ -24,7 +29,7 @@ export const AuthButton = () => {
       return hasLetter && hasNumber && isLongEnough;
     };
     
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
       e.preventDefault();
       const formData = new FormData(e.currentTarget);
       const password = formData.get('signup-password')
@@ -42,30 +47,66 @@ export const AuthButton = () => {
           title: "Success!",
           description: "Form submitted successfully.",
           });
-        };
+          try {
+            await axios.post('http://localhost:3000/signup', {
+              firstname: formData.get('firstname'),
+              lastname: formData.get('lastname'),
+              email: formData.get('signup-email'),
+              password: formData.get('signin-password')
+            });
+            toast({
+              title: 'success!',
+              description: 'sign-up success'
+            });
+            setIsOpen(false);
+          } catch (error){
+            toast({
+              variant: 'destructive',
+              title: 'sign up failed',
+              description: error.response.data.message
+            });
+          }
+        }
+        else{
+        try {
+          await axios.post('/signin',{
+            email: formData.get('email'),
+            password: formData.get('password')
+          });
+          toast({
+            title: 'success!',
+            description: 'sing up success'
+          });
+          setIsOpen(false);
+        } catch (error){
+          toast({
+            variant: 'destructive',
+            title: 'sign up fail',
+            description: error.response.data.message
+          });
+        }
       }
+    };
     
-  
     return (
       <>
         <button
           onClick={() => setIsOpen(true)}
-          className="rounded-full border border-black px-3 py-1 text-lg transition-all hover:text-gray-500"
+          className="mx-4 rounded-full border border-black px-3 py-1 text-lg transition-all hover:text-gray-500 font-semibold"
         >
           Sign in | Sign up
         </button>
   
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogContent className="sm:max-w-[425px] p-0">
+          <DialogContent className="max-w-[425px] p-5">
             <button
               onClick={() => setIsOpen(false)}
-              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100"
+              className="absolute right-4 top-1 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100"
             >
-              <X className="h-4 w-4" />
             </button>
   
-            <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 text-lg">
+            <Tabs defaultValue="signin" className="w-full text-xl">
+              <TabsList className="grid w-full grid-cols-2 ">
                 <TabsTrigger value="signin">Sign In</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>
               </TabsList>
@@ -182,5 +223,4 @@ export const AuthButton = () => {
       </>
     );
 };  
-
 export default AuthButton
