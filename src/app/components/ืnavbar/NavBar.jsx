@@ -13,9 +13,7 @@ function NavBar() {
         <NavigationMenu className="flex justify-end text-xl">
         <NavigationMenuList>
             <NavigationMenuItem>
-                <Link href='/' className=" hover:text-slate-500 transition duration-300">
-                    Home
-                </Link>
+                <Link href='/'>HOME</Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
                 <NavigationMenuTrigger className = 'flex items-center py-5 text-xl  hover:text-slate-500 transition duration-300'>กฏหมาย</NavigationMenuTrigger>

@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Flag, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { useToast } from 'hooks/use-toast'
 
 
@@ -16,7 +16,7 @@ export const AuthButton = () => {
   
     const validatePassword = (password) => {
       const hasLetter = /[a-zA-Z]/.test(password);
-      const hasNumber = /[0-9]/.test(password);
+      const hasNumber = /\d/.test(password);
       const isLongEnough = password.length >= 8;
       return hasLetter && hasNumber && isLongEnough;
     };
@@ -178,7 +178,6 @@ export const AuthButton = () => {
         </Dialog>
       </>
     );
-};
-  
+};  
 
 export default Authbutton
