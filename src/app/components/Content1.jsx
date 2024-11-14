@@ -6,6 +6,7 @@ import { FaSearch } from "react-icons/fa";
 import CivilSec from './civil_sec/CivilSec';
 import CrimeSec from './crime_sec/CrimeSec';
 import { useState } from 'react';
+import Link from 'next/link';
 
 
 export const Content1 = () => {
@@ -16,6 +17,9 @@ export const Content1 = () => {
   }
   return (
     <>
+    <div className='flex text-xl justify-center'>
+      <button className='border-4 p-2 rounded-full bg-slate-700 text-white'><Link href='/editprofile'>profile</Link></button>
+    </div>
     <section className='bg-indigo-300 rounded-[52px] mx-20 mt-10 h-[500px]'>
         <div className='absolute w-[421px] h-[180px] left-[170px] top-[220px]'>
             <h1 className='font-black text-6xl text-left pl-10 leading-[90px] '>ทำกฎหมายให้เป็นเรื่องง่าย!</h1>
@@ -28,11 +32,11 @@ export const Content1 = () => {
                 value={searchTerm}
                 onChange={(e) => setsearchTerm(e.target.value)}
                 placeholder='ค้นหากฏหมาย'
-                className='w-96 h-12 px-4 rounded-full border border-gray-200 
+                className='w-96 xl:w-3/12 h-12 px-4 rounded-full border border-gray-200 
                 outline-none bg-white shadow-sm transition-all duration-200 
                 focus:border-[#8B3A3A] focus:ring-2 focus:ring-[#8B3A3A]/20' 
               />
-              <button type='submit' className='relative ml-[265px] mb-0 -mt-11 h-10 px-6 flex items-center gap-2 
+              <button type='submit' className='relative ml-[265px] xl:ml-[405] mb-0 -mt-11 h-10 px-6 flex items-center gap-2 
               bg-[#8B3A3A] hover:bg-[#6d2e2e] text-white 
               rounded-full transition-colors duration-200'>
                 <FaSearch/>
