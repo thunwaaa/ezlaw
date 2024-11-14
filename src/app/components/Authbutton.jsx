@@ -1,4 +1,5 @@
 "use client"
+import React, {userState} from 'react'
 import { useState } from 'react'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -15,9 +16,6 @@ const playfair_display = Playfair_Display({
     weight: ['400','700'],
 })
 
-
-
-
 export const AuthButton = () => {
     const [isOpen, setIsOpen] = useState(false)
     const { toast } = useToast()
@@ -28,11 +26,12 @@ export const AuthButton = () => {
       const isLongEnough = password.length >= 8;
       return hasLetter && hasNumber && isLongEnough;
     };
+
     
     const handleSubmit = async(e) => {
       e.preventDefault();
       const formData = new FormData(e.currentTarget);
-      const password = formData.get('signup-password')
+      const password = formData.get('signup-password');
       if (formData.get('signup-password')){
         if (!validatePassword(password)) {
           toast({
@@ -47,44 +46,21 @@ export const AuthButton = () => {
           title: "Success!",
           description: "Form submitted successfully.",
           });
-          try {
-            await axios.post('http://localhost:3000/signup', {
-              firstname: formData.get('firstname'),
-              lastname: formData.get('lastname'),
-              email: formData.get('signup-email'),
-              password: formData.get('signin-password')
-            });
-            toast({
-              title: 'success!',
-              description: 'sign-up success'
-            });
-            setIsOpen(false);
-          } catch (error){
-            toast({
-              variant: 'destructive',
-              title: 'sign up failed',
-              description: error.response.data.message
-            });
-          }
         }
-        else{
-        try {
-          await axios.post('/signin',{
-            email: formData.get('email'),
-            password: formData.get('password')
-          });
-          toast({
-            title: 'success!',
-            description: 'sing up success'
-          });
-          setIsOpen(false);
-        } catch (error){
-          toast({
-            variant: 'destructive',
-            title: 'sign up fail',
-            description: error.response.data.message
-          });
+      
+      try{
+        const res = await axios.post("http://localhost:3000/api/signup", {
+            firstname,lastname,email,password
+        });
+
+        if(res.ok){
+          const form = e.target;
+          setError("");
+          form.reset();
         }
+
+      }catch(err){
+        console.log("error");
       }
     };
     
@@ -153,7 +129,7 @@ export const AuthButton = () => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name</Label>
-                    <Input
+                    <Input 
                       id="firstname"
                       name="firstname"
                       type="text"
@@ -164,7 +140,7 @@ export const AuthButton = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Last Name</Label>
-                    <Input
+                    <Input 
                       id="lastname"
                       name="lastname"
                       type="text"
@@ -175,7 +151,7 @@ export const AuthButton = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
-                    <Input
+                    <Input 
                       id="signup-email"
                       name="signup-email"
                       type="email"
@@ -186,7 +162,7 @@ export const AuthButton = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-password">Password</Label>
-                    <Input
+                    <Input onchange={(e) => setpassword(e.target.value)}
                       id="signup-password"
                       name="signup-password"
                       type="password"
@@ -200,7 +176,7 @@ export const AuthButton = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirm-password">Confirm Password</Label>
-                    <Input
+                    <Input onchange={(e) => setconfirmpassword(e.target.value)}
                       id="confirm-password"
                       name="confirm-password"
                       type="password"

@@ -3,6 +3,7 @@ import { NavigationMenu, NavigationMenuContent,
   NavigationMenuItem,NavigationMenuList,NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import AuthButton from "../AuthButton";
 import Image from "next/image";
+import { signIn, signOut, useSession} from 'next-auth/react'
 import { Playfair_Display } from "next/font/google";
 
 const playfair_display = Playfair_Display({
@@ -12,6 +13,7 @@ const playfair_display = Playfair_Display({
 
 
 export function NavBar() {
+    const { data: session } = useSession();
   return (
     <div className="flex justify-between mx-8 my-5">
         <div className="flex justify-start text-5xl font-extrabold text-red-900 ">
