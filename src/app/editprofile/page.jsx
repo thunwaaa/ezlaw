@@ -26,28 +26,28 @@ function EditProfile() {
     }
   return (
     
-        <div className='border w-11/12 flex justify-center mt-10 mx-auto pb-20'>
+        <div className=' w-11/12 flex justify-center mt-10 mx-auto pb-20'>
             <div>
                 <Image
-                    src='/avatar.png'
-                    width={200}
+                    src='/profilePic.jpg'
+                    width={250}
                     height={150}
                     alt='profile'
-                    className='fixed left-[600] mt-20'
+                    className='fixed left-[750] mt-20 rounded-full'
                 />
                 <button 
                     onClick={() => setIsEditing(!isEditing)} 
-                    className={`bg-gray-500 w-56 p-2 rounded-xl mt-80 text-xl mr-[510] static ${
-                        isEditing ? "bg-slate-950 text-white" : "bg-gray-100 border-gray-300"
+                    className={`bg-gray-500 fixed w-56 p-3 rounded-xl mt-96 text-2xl -ml-[430] ${
+                        isEditing ? "bg-slate-950 text-white" : "bg-slate-300 border-gray-300"
                     }`}>
                     {isEditing ? "บันทึกโปรไฟล์" : "แก้ไขโปรไฟล์ของคุณ"}
                 </button>
             </div>
 
-            <div className='grid grid-cols-2 gap-10 mt-20 fixed right-[500]'>
+            <div className='grid grid-cols-2 gap-10 mt-24 fixed right-[700]'>
 
                 <div>
-                    <label htmlFor="firstname" className='block text-lg font-medium'>
+                    <label htmlFor="firstname" className='block text-2xl font-medium'>
                         ชื่อจริง
                     </label>
                     <input
@@ -57,14 +57,14 @@ function EditProfile() {
                         value={profile.firstname}
                         onChange={handleChange}
                         readOnly={!isEditing}
-                        className={`mt-1 block w-full px-3 py-2 border rounded-md ${
+                        className={`mt-1 block w-full p-3 border rounded-md text-xl ${
                             isEditing ? "border-gray-400" : "bg-gray-100 border-gray-300"
                         }`}
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="lastname" className='block text-lg font-medium'>
+                    <label htmlFor="lastname" className='block text-2xl font-medium'>
                         นามสกุล
                     </label>
                     <input 
@@ -74,14 +74,14 @@ function EditProfile() {
                         value={profile.lastname}
                         onChange={handleChange}
                         readOnly={!isEditing}
-                        className={`mt-1 block w-full px-3 py-2 border rounded-md ${
+                        className={`mt-1 block w-full p-3 border rounded-md text-xl ${
                             isEditing ? "border-gray-400" : "bg-gray-100 border-gray-300"
                         }`} 
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="gender" className="block text-sm font-medium">
+                    <label htmlFor="gender" className="block text-2xl font-medium">
                         เพศ
                     </label>
                     <select
@@ -90,7 +90,7 @@ function EditProfile() {
                         value={profile.gender}
                         onChange={handleChange}
                         disabled={!isEditing} // ปิดใช้งานถ้าไม่อยู่ในโหมดแก้ไข
-                        className={`mt-1 block w-full px-3 py-2 border rounded-md ${
+                        className={`mt-1 block w-full p-3 border rounded-md text-xl ${
                             isEditing ? "border-gray-400" : "bg-gray-100 border-gray-300"
                         }`}
                     >
@@ -101,7 +101,7 @@ function EditProfile() {
                 </div>
 
                 <div>
-                    <label label htmlFor="phone" className="block text-sm font-medium">
+                    <label label htmlFor="phone" className="block font-medium text-2xl">
                         เบอร์โทรศัพท์
                     </label>
                     <input
@@ -111,13 +111,13 @@ function EditProfile() {
                         value={profile.phone}
                         onChange={handleChange}
                         readOnly={!isEditing}
-                        className={`mt-1 block w-full px-3 py-2 border rounded-md ${
+                        className={`mt-1 block w-full p-3 border rounded-md text-xl ${
                             isEditing ? "border-gray-400" : "bg-gray-100 border-gray-300"
                         }`}
                     />
                 </div>
                 <div>
-                    <label htmlFor="email" className="block text-sm font-medium">
+                    <label htmlFor="email" className="block text-2xl font-medium">
                         E-mail
                     </label>
                     <input
@@ -127,7 +127,7 @@ function EditProfile() {
                         value={profile.email}
                         onChange={handleChange}
                         readOnly
-                        className={`mt-1 block w-full px-3 py-2 border rounded-md ${
+                        className={`mt-1 block w-full p-3 border rounded-md text-xl ${
                             isEditing ? "border-gray-400" : "bg-gray-100 border-gray-300"
                         }`}
                     />

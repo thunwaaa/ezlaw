@@ -19,6 +19,7 @@ export const Content1 = () => {
     <>
     <div className='flex text-xl justify-center'>
       <button className='border-4 p-2 rounded-full bg-slate-700 text-white'><Link href='/editprofile'>profile</Link></button>
+      <button className='border-4 p-2 rounded-full bg-slate-700 text-white'><Link href='/planMember'>membership plan</Link></button>
     </div>
     <section className='bg-indigo-300 rounded-[52px] mx-20 mt-10 h-[500px]'>
         <div className='absolute w-[421px] h-[180px] left-[170px] top-[220px]'>
