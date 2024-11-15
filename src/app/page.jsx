@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Content1 from "./components/Content1";
+import Foot from "./components/footer/Foot";
 
 
 export default function Home() {
@@ -8,7 +9,7 @@ export default function Home() {
       <Content1 />
       
       
-
+      <Foot />
     </div>
   );
 }
