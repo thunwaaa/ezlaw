@@ -11,9 +11,9 @@ function ConsultLawyer() {
           <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuTrigger><Link href = '/consult'>ทั้งหมด</Link></NavigationMenuTrigger>
+              <NavigationMenuTrigger><li className='text-xl'><Link href = '/consult'>ทั้งหมด</Link></li></NavigationMenuTrigger>
               <NavigationMenuContent>
-                <ul className='flex-col w-48 text-left pl-4 pt-4 mb-5'>
+                <ul className='flex-col w-48 text-left pl-4 pt-4 mb-5 text-xl'>
                   <li><Link href = '/consult/crimelawyer'>อาญา</Link></li>
                   <li><Link href = '/consult/civillawyer'>แพ่งและพาณิชย์</Link></li>
                 </ul>

@@ -27,41 +27,50 @@ export const AuthButton = () => {
       return hasLetter && hasNumber && isLongEnough;
     };
 
+    const [firstname, setfirstname] = useState("");
+    const [lastname, setlastname] = useState("");
+    const [email,setemail] = useState("");
+    const [password,setpassword] = useState("");
+    const [confirmpassword, setconfirmpassword] = useState("");
+    const [error, setError] = useState("");
+    const [success,setSuccess] = useState("");
+
     
     const handleSubmit = async(e) => {
       e.preventDefault();
-      const formData = new FormData(e.currentTarget);
-      const password = formData.get('signup-password');
-      if (formData.get('signup-password')){
-        if (!validatePassword(password)) {
-          toast({
-            variant: "destructive",
-            title: "Invalid Password",
-            description: "Password must be at least 8 characters long and contain both letters and numbers.",
-          });
-          return;
-        }
-        // Continue with form submission if password is valid
-        toast({
-          title: "Success!",
-          description: "Form submitted successfully.",
-          });
-        }
-      
+      if(password != confirmpassword){
+        setError("Password do not match");
+        return;
+      }
+      if(!firstname || !lastname || !email || !password || !confirmpassword){
+        setError("please complete all inputs");
+        return;
+      }
       try{
-        const res = await axios.post("http://localhost:3000/api/signup", {
+            
+        const res = await fetch("http://localhost:3000/api/signupmongo" ,{
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
             firstname,lastname,email,password
-        });
-
+          })
+        })
         if(res.ok){
           const form = e.target;
           setError("");
+          setSuccess("User register success");
           form.reset();
+          setIsOpen(false);
         }
-
-      }catch(err){
-        console.log("error");
+        else{
+          console.log("user registed fail");
+        }
+      }catch(error){
+        console.log("error: ",error);
       }
+      
     };
     
     return (
@@ -127,9 +136,15 @@ export const AuthButton = () => {
   
               <TabsContent value="signup" className="p-6">
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  {error && (
+                    <div className='bg-red-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
+                      {error}
+                    </div>
+                  )}
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name</Label>
                     <Input 
+                      onChange={(e) => setfirstname(e.target.value)}
                       id="firstname"
                       name="firstname"
                       type="text"
@@ -141,6 +156,7 @@ export const AuthButton = () => {
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Last Name</Label>
                     <Input 
+                      onChange={(e) => setlastname(e.target.value)}
                       id="lastname"
                       name="lastname"
                       type="text"
@@ -152,6 +168,7 @@ export const AuthButton = () => {
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
                     <Input 
+                      onChange={(e) => setemail(e.target.value)}
                       id="signup-email"
                       name="signup-email"
                       type="email"
@@ -162,7 +179,8 @@ export const AuthButton = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-password">Password</Label>
-                    <Input onchange={(e) => setpassword(e.target.value)}
+                    <Input
+                      onChange={(e) => setpassword(e.target.value)}
                       id="signup-password"
                       name="signup-password"
                       type="password"
@@ -176,7 +194,8 @@ export const AuthButton = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirm-password">Confirm Password</Label>
-                    <Input onchange={(e) => setconfirmpassword(e.target.value)}
+                    <Input
+                      onChange={(e) => setconfirmpassword(e.target.value)}
                       id="confirm-password"
                       name="confirm-password"
                       type="password"
