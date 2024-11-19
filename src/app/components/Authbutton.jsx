@@ -48,7 +48,7 @@ export const AuthButton = () => {
       }
       try{
             
-        const res = await fetch("http://localhost:3000/api/signupmongo" ,{
+        const res = await fetch("http://localhost:3001/api/signupmongo" ,{
           method: "POST",
           headers: {
             "Content-Type": "application/json"
