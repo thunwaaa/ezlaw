@@ -2,6 +2,9 @@ import User from "../../models/user";
 import bcrypt from "bcryptjs";
 
 class Userservices {
+    async #hashedPassword(password){
+        return await bcrypt.hash(password,10);
+    }
     async checkuserEmail(email){
         try{
             const user = await User.findOne({email}).select("_id");
@@ -13,7 +16,7 @@ class Userservices {
     }
     async register({firstname,lastname,email,password}){
         try{
-            const hashedpassword = await bcrypt.hash(password,10)
+            const hashedpassword = await this.#hashedPassword(password);
             const user = await User.create({firstname,lastname,email,password:hashedpassword});
 
             return user;

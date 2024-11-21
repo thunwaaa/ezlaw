@@ -17,10 +17,6 @@ export const Content1 = () => {
   }
   return (
     <>
-    <div className='flex text-xl justify-center'>
-      <button className='border-4 p-2 rounded-full bg-slate-700 text-white'><Link href='/editprofile'>profile</Link></button>
-      <button className='border-4 p-2 rounded-full bg-slate-700 text-white'><Link href='/planMember'>membership plan</Link></button>
-    </div>
     <section className='bg-indigo-300 rounded-[52px] mx-20 mt-10 h-[500px]'>
         <div className='absolute w-[421px] h-[180px] left-[170px] top-[220px]'>
             <h1 className='font-black text-6xl text-left pl-10 leading-[90px] '>ทำกฎหมายให้เป็นเรื่องง่าย!</h1>
@@ -37,7 +33,7 @@ export const Content1 = () => {
                 outline-none bg-white shadow-sm transition-all duration-200 
                 focus:border-[#8B3A3A] focus:ring-2 focus:ring-[#8B3A3A]/20' 
               />
-              <button type='submit' className='relative ml-[265px] xl:ml-[405] mb-0 -mt-11 h-10 px-6 flex items-center gap-2 
+              <button type='submit' className='relative ml-[235px] xl:ml-[380] mb-0 -mt-11 h-10 px-6 flex items-center gap-2 
               bg-[#8B3A3A] hover:bg-[#6d2e2e] text-white 
               rounded-full transition-colors duration-200'>
                 <FaSearch/>

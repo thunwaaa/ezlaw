@@ -1,8 +1,20 @@
+"use client"
 import React from 'react'
 import Link from 'next/link'
-
-
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 function Civillaw() {
+
+  const router = useRouter();
+  const redirect = (path) => router.push(path);
+
+  const {data: session} = useSession();
+  console.log(session);
+
+  if(!session){
+    router.replace("/crime/crime1");
+  }
+
   return (
     <article className='rounded-2xl mx-auto mt-10 w-11/12 h-auto bg-[#FFFADF]'>
       
