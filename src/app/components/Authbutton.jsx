@@ -1,6 +1,5 @@
 "use client"
-import React, {userState,userEffect, useEffect} from 'react'
-import { useState } from 'react'
+import React, {useState} from 'react'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
@@ -19,7 +18,6 @@ const playfair_display = Playfair_Display({
 
 export const AuthButton = () => {
     const [isOpen, setIsOpen] = useState(false)
-    const { toast } = useToast()
   
     const validatePassword = (password) => {
       const hasLetter = /[a-zA-Z]/.test(password);
@@ -102,7 +100,7 @@ export const AuthButton = () => {
         >
           Sign in | Sign up
         </button>
-        <a onClick={()=>signOut()} className='bg-red-500 cursor-pointer text-white border py-1 px-2 rounded-md'>Logout</a>
+        <Link onClick={()=>signOut()} className='bg-red-500 cursor-pointer text-white border py-1 px-2 rounded-md'>Logout</Link>
   
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogContent className="max-w-[425px] p-5">

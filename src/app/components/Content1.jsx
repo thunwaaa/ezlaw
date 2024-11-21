@@ -35,7 +35,7 @@ export const Content1 = () => {
               />
               <button type='submit' className='relative ml-[235px] xl:ml-[380] mb-0 -mt-11 h-10 px-6 flex items-center gap-2 
               bg-[#8B3A3A] hover:bg-[#6d2e2e] text-white 
-              rounded-full transition-colors duration-200'>
+              rounded-full transition-colors duration-200 lg:right-48'>
                 <FaSearch/>
               <span className='text-lg'>ค้นหา</span>
               </button>
@@ -49,13 +49,13 @@ export const Content1 = () => {
                     width={400}
                     height={400}
                     alt="picture"
-                    className='absolute ml-96 right-[490] top-[200]'
+                    className='absolute ml-96 right-[490] top-[200] lg:right-64'
                 />
             </div>
-            <div className='absolute w-[232px] h-[62px] right-[300px] top-[230px] bg-blue-500 rounded-[31px]'></div>
-            <div className='absolute w-[200px] h-[51px] right-[850px] top-[202px] bg-blue-500 rounded-[31px]'></div>
-            <div className='absolute w-[149px] h-[58px] right-[200px] top-[415px] bg-blue-500 rounded-[31px]'></div>
-            <div className='absolute w-[139px] h-[55px] right-[950px] top-[450px] bg-blue-500 rounded-[31px]'></div>
+            <div className='absolute w-[232px] h-[62px] right-[300px] top-[230px] bg-blue-500 rounded-[31px] lg:right-28 lg:w-[220px]'></div>
+            <div className='absolute w-[200px] h-[51px] right-[850px] top-[202px] bg-blue-500 rounded-[31px] lg:right-[610px]'></div>
+            <div className='absolute w-[149px] h-[58px] right-[200px] top-[415px] bg-blue-500 rounded-[31px] lg:right-24'></div>
+            <div className='absolute w-[139px] h-[55px] right-[950px] top-[450px] bg-blue-500 rounded-[31px] lg:right-[750px]'></div>
         </div>
     </section>
     <div className='text-center my-5'>

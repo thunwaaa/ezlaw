@@ -1,10 +1,8 @@
 'use client'
 
 import Link from "next/link";
-import { useState } from "react";
 import { NavigationMenu, NavigationMenuContent,
   NavigationMenuItem,NavigationMenuList,NavigationMenuTrigger, NavigationMenuLink } from "@/components/ui/navigation-menu";
-import { useToast } from "hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Dialog,DialogContent,DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,8 +18,7 @@ const playfair_display = Playfair_Display({
 
 
 export function NavBar() {
-    const [isOpen, setIsOpen] = useState(false);
-    const { toast } = useToast();
+
     
   return (
     <div className="flex justify-between mx-8 my-5">
@@ -60,29 +57,33 @@ export function NavBar() {
                         className="absolute -top-4 right-48"                   
                     /> 
                     
-                        <Link href='/consult'>
-                            <NavigationMenuLink 
-                                className=" border border-slate-950 rounded-full px-3 py-1 font-semibold hover:text-slate-500 hover:border-slate-500 transition duration-300"
-                            >
-                                ปรึกษาทนาย
-                            </NavigationMenuLink>
+                        <Link 
+                        href='/consult' 
+                        className=" border border-slate-950 rounded-full px-3 py-1 font-semibold hover:text-slate-500 hover:border-slate-500 transition duration-300 mr-3">
+                            ปรึกษาทนาย
                         </Link>
                     
                 </NavigationMenuItem> 
                 <NavigationMenuItem>
                     <Dialog>
                         <DialogTrigger 
-                            className=" border border-slate-950 rounded-full px-3 py-1 transition duration-300 ml-3 hover:text-gray-500 hover:border-slate-500 font-semibold">
+                            className=" border border-slate-950 rounded-full px-3 py-1 transition duration-300 hover:text-gray-500 hover:border-slate-500 font-semibold">
                             Sign in | Sign up
                         </DialogTrigger>
-                        <DialogContent className="max-w-[425px] p-5">
+                        <DialogContent className="max-w-[425px] p-5 ">
+                        {/* <DialogHeader>
+                            <DialogTitle>Edit profile</DialogTitle>
+                            <DialogDescription>
+                                Make changes to your profile here. Click save when you're done.
+                            </DialogDescription>
+                        </DialogHeader> */}
                             <Tabs defaultValue="signin" className="w-full text-xl">
-                                <TabsList className="grid w-full grid-cols-2 ">
+                                <TabsList className="grid w-full grid-cols-2 mt-4 ">
                                     <TabsTrigger value="signin">Sign In</TabsTrigger>
                                     <TabsTrigger value="signup">Sign Up</TabsTrigger>
                                 </TabsList>
 
-                                <TabsContent value="signin" className="p-6">
+                                <TabsContent value="signin" className="p-5">
                                     <form className="space-y-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="email">Email</Label>
