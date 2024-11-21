@@ -1,9 +1,16 @@
-import Link from "next/link";
-import { NavigationMenu, NavigationMenuContent,
-  NavigationMenuItem,NavigationMenuList,NavigationMenuTrigger } from "@/components/ui/navigation-menu";
-import AuthButton from "../AuthButton";
-import Image from "next/image";
+'use client'
 
+import Link from "next/link";
+import { useState } from "react";
+import { NavigationMenu, NavigationMenuContent,
+  NavigationMenuItem,NavigationMenuList,NavigationMenuTrigger, NavigationMenuLink } from "@/components/ui/navigation-menu";
+import { useToast } from "hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Dialog,DialogContent,DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Image from "next/image";
 import { Playfair_Display } from "next/font/google";
 
 const playfair_display = Playfair_Display({
@@ -13,50 +20,165 @@ const playfair_display = Playfair_Display({
 
 
 export function NavBar() {
+    const [isOpen, setIsOpen] = useState(false);
+    const { toast } = useToast();
     
   return (
     <div className="flex justify-between mx-8 my-5">
         <div className="flex justify-start text-5xl font-extrabold text-red-900 ">
-            <h1 className={playfair_display.className}>EZLAW</h1>
+            <Link href='/' className={playfair_display.className}>EZLAW</Link>
         </div>
-        <NavigationMenu className="flex justify-end text-lg ">
-        <NavigationMenuList>
-            <NavigationMenuItem>
-                <Link href='/' className="font-semibold">HOME</Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-                <NavigationMenuTrigger className = ' py-5 text-xl  hover:text-slate-500 transition duration-300 content-center'>กฏหมาย</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                    <ul className="  w-[100px] text-base  p-4 md:w-[200px] xl:w-[200px] ">
-                        <li className="mb-1">
-                            <Link href='/crime/crime1' className=" hover:text-slate-500 transition duration-300">
-                                กฏหมายอาญา
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href='/civil' className=" hover:text-slate-500 transition duration-300">
-                                กฏหมายแพ่งและพาณิชย์
-                            </Link>
-                        </li>
-                    </ul>
-                </NavigationMenuContent>
-            </NavigationMenuItem>
-            
-            <NavigationMenuItem>
-                <Image src='/crownIcon.png' width={30} height={30} alt="Icon" className="absolute -top-4 right-[215] "/>
+        <NavigationMenu className="flex justify-end text-lg">
+            <NavigationMenuList>
+                <NavigationMenuItem>
+                    <Link href='/' className="font-semibold text-xl hover:text-slate-500 transition duration-300">HOME</Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                    <NavigationMenuTrigger className = 'py-5 text-xl hover:text-slate-500 hover:bg-none transition duration-300 content-center rounded-full'>กฏหมาย</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                        <ul className="  w-[100px] text-base  p-4 md:w-[200px] xl:w-[200px] ">
+                            <li className="mb-1">
+                                <Link href='/crime/crime1' className=" hover:text-slate-500 transition duration-300">
+                                    กฏหมายอาญา
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href='/civil' className=" hover:text-slate-500 transition duration-300">
+                                    กฏหมายแพ่งและพาณิชย์
+                                </Link>
+                            </li>
+                        </ul>
+                    </NavigationMenuContent>
+                </NavigationMenuItem>
                 
-                <Link href='/consult' className=" border border-solid border-slate-950 
-                rounded-full px-3 py-1 font-semibold hover:text-slate-500 
-                hover:border-slate-500 transition duration-300">
+                <NavigationMenuItem>
+                    <Image
+                        src="/crownIcon.png"
+                        width={30}
+                        height={30}
+                        alt = 'Icon'
+                        className="absolute -top-4 right-48"                   
+                    /> 
                     
-                    ปรึกษาทนาย
-                </Link>
-            </NavigationMenuItem> 
-            <NavigationMenuItem>
-                <AuthButton className ="flex items-center" />
-            </NavigationMenuItem>
-             
-        </NavigationMenuList>
+                        <Link href='/consult'>
+                            <NavigationMenuLink 
+                                className=" border border-slate-950 rounded-full px-3 py-1 font-semibold hover:text-slate-500 hover:border-slate-500 transition duration-300"
+                            >
+                                ปรึกษาทนาย
+                            </NavigationMenuLink>
+                        </Link>
+                    
+                </NavigationMenuItem> 
+                <NavigationMenuItem>
+                    <Dialog>
+                        <DialogTrigger 
+                            className=" border border-slate-950 rounded-full px-3 py-1 transition duration-300 ml-3 hover:text-gray-500 hover:border-slate-500 font-semibold">
+                            Sign in | Sign up
+                        </DialogTrigger>
+                        <DialogContent className="max-w-[425px] p-5">
+                            <Tabs defaultValue="signin" className="w-full text-xl">
+                                <TabsList className="grid w-full grid-cols-2 ">
+                                    <TabsTrigger value="signin">Sign In</TabsTrigger>
+                                    <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                                </TabsList>
+
+                                <TabsContent value="signin" className="p-6">
+                                    <form className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="email">Email</Label>
+                                            <Input
+                                                id="email"
+                                                name="email"
+                                                type="email"
+                                                placeholder="Enter your Email"
+                                                className="rounded-lg border-2"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="password">Password</Label>
+                                            <Input
+                                                id="password"
+                                                name="password"
+                                                type="password"
+                                                placeholder="Enter your password"
+                                                className="rounded-lg border-2"
+                                                required
+                                            />
+                                        </div>
+                                        <Button type="submit" className="w-full bg-black text-white hover:bg-gray-800">
+                                            Sign In
+                                        </Button>
+                                    </form>
+                                </TabsContent>
+
+                                <TabsContent value="signup" className="p-6">
+                                    <form className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="firstName">First Name</Label>
+                                            <Input
+                                                id="firstname"
+                                                name="firstname"
+                                                type="text"
+                                                placeholder="Enter your Name"
+                                                className="rounded-lg border-2"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="lastName">Last Name</Label>
+                                            <Input
+                                                id="lastname"
+                                                name="lastname"
+                                                type="text"
+                                                placeholder="Enter your Name"
+                                                className="rounded-lg border-2"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="signup-email">Email</Label>
+                                            <Input
+                                                id="email"
+                                                name = "email"
+                                                type = "email"
+                                                placeholder = "e.g John@gmail.com"
+                                                className = "rounded-lg border-2"
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="signup-password">Password</Label>
+                                            <Input
+                                                id = "password"
+                                                name = "password"
+                                                type = "password"
+                                                placeholder = "Enter your password"
+                                                className = "rounded-lg border-2"
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="confirm-password">Confirm Password</Label>
+                                            <Input
+                                                id = "confirm-password"
+                                                name = "comfirm-password"
+                                                type = "password"
+                                                placeholder = "Enter Confirm Password"
+                                                className = "rounded-lg border-2"
+                                                required
+                                            />
+                                        </div>
+                                        <Button type = "submit" className = "w-full bg-black text-white hover:bg-gray-800">
+                                            Sign Up
+                                        </Button>
+                                    </form>
+                                </TabsContent>
+                            </Tabs>
+                        </DialogContent>
+                    </Dialog>
+                </NavigationMenuItem>
+            </NavigationMenuList>
         </NavigationMenu>
         
       

@@ -1,5 +1,5 @@
 "use client"
-import React, {userState} from 'react'
+import React, {userState,userEffect, useEffect} from 'react'
 import { useState } from 'react'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { useToast } from 'hooks/use-toast'
 import Link from 'next/link'
-import axios from 'axios'
 import { Playfair_Display } from 'next/font/google'
+import { signIn, signOut } from 'next-auth/react'
+
 
 const playfair_display = Playfair_Display({
     subsets: ['latin','latin-ext'],
@@ -48,7 +49,7 @@ export const AuthButton = () => {
       }
       try{
             
-        const res = await fetch("http://localhost:3001/api/signupmongo" ,{
+        const res = await fetch("http://localhost:3000/api/register " ,{
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -69,9 +70,29 @@ export const AuthButton = () => {
         }
       }catch(error){
         console.log("error: ",error);
-      }
+      }     
       
     };
+    const handleSubmit2 = async (e) => {
+      e.preventDefault();
+  
+      try{
+        const form = e.target;
+        const res = await signIn("credentials", {
+          email,password,redirect:false
+        });
+        console.log("log in success");
+        form.reset();
+  
+        if(res.error){
+          setError("Invalid credential");
+          return;
+        }
+      }catch(error){
+        console.log(error);
+      }
+    }
+
     
     return (
       <>
@@ -81,6 +102,7 @@ export const AuthButton = () => {
         >
           Sign in | Sign up
         </button>
+        <a onClick={()=>signOut()} className='bg-red-500 cursor-pointer text-white border py-1 px-2 rounded-md'>Logout</a>
   
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogContent className="max-w-[425px] p-5">
@@ -97,7 +119,7 @@ export const AuthButton = () => {
               </TabsList>
   
               <TabsContent value="signin" className="p-6">
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit2} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
@@ -107,6 +129,7 @@ export const AuthButton = () => {
                       placeholder="Enter your Email"
                       className="rounded-lg border-2"
                       required
+                      onChange={(e) => setemail(e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
@@ -118,6 +141,7 @@ export const AuthButton = () => {
                       placeholder="Enter your password" 
                       className="rounded-lg border-2"
                       required
+                      onChange={(e) => setpassword(e.target.value)}
                     />
                   </div>
                   <div className="text-start">
