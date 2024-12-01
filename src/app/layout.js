@@ -3,7 +3,6 @@ import { Playfair_Display, Noto_Sans_Thai } from 'next/font/google'
 import "./globals.css";
 import NavBar from "./components/navbar/NavBar";
 import Foot from "./components/footer/Foot";
-import { AuthProvider } from "./Providers";
 
 const playfair_display = Playfair_Display({
   subsets: ['latin','latin-ext'],
@@ -42,9 +41,7 @@ export default function RootLayout({ children }) {
           <NavBar />
         </header>
         <main>
-          <AuthProvider>
             {children}
-          </AuthProvider>
           </main>
         
       </body>
