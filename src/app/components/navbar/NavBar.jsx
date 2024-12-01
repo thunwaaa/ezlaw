@@ -61,10 +61,10 @@ export function NavBar() {
             console.error("error: ",error);
         }
     };
-    {/* 
+
     useEffect(() => {
         checksession();
-    }, []); */}
+    }, []);
 
     const logoutsubmit = async (e) => {
         try{
@@ -221,25 +221,25 @@ export function NavBar() {
                                         <div className="space-y-2">
                                             <Label htmlFor="email">Email</Label>
                                             <Input
+                                                onChange={(e) => setemail(e.target.value)}
                                                 id="email"
                                                 name="email"
                                                 type="email"
                                                 placeholder="Enter your Email"
                                                 className="rounded-lg border-2"
                                                 required
-                                                onChange={(e) => setemail(e.target.value)}
                                             />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="password">Password</Label>
                                             <Input
+                                                onChange={(e) => setpassword(e.target.value)}
                                                 id="password"
                                                 name="password"
                                                 type="password"
                                                 placeholder="Enter your password"
                                                 className="rounded-lg border-2"
                                                 required
-                                                onChange={(e) => setpassword(e.target.value)}
                                             />
                                         </div>
                                         <Button type="submit" className="w-full bg-black text-white hover:bg-gray-800">
@@ -253,61 +253,61 @@ export function NavBar() {
                                         <div className="space-y-2">
                                             <Label htmlFor="firstName">First Name</Label>
                                             <Input
+                                                onChange={(e) => setfirstname(e.target.value)}
                                                 id="firstname"
                                                 name="firstname"
                                                 type="text"
                                                 placeholder="Enter your Name"
                                                 className="rounded-lg border-2"
                                                 required
-                                                onChange={(e) => setfirstname(e.target.value)}
                                             />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="lastName">Last Name</Label>
                                             <Input
+                                                onChange={(e) => setlastname(e.target.value)}
                                                 id="lastname"
                                                 name="lastname"
                                                 type="text"
                                                 placeholder="Enter your Name"
                                                 className="rounded-lg border-2"
                                                 required
-                                                onChange={(e) => setlastname(e.target.value)}
                                             />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="signup-email">Email</Label>
                                             <Input
+                                                onChange={(e) => setemail(e.target.value)}
                                                 id="email"
                                                 name = "email"
                                                 type = "email"
                                                 placeholder = "e.g John@gmail.com"
                                                 className = "rounded-lg border-2"
                                                 required
-                                                onChange={(e) => setemail(e.target.value)}
                                             />
                                         </div>
                                         <div>
                                             <Label htmlFor="signup-password">Password</Label>
                                             <Input
+                                                onChange={(e) => setpassword(e.target.value)}
                                                 id = "password"
                                                 name = "password"
                                                 type = "password"
                                                 placeholder = "Enter your password"
                                                 className = "rounded-lg border-2"
                                                 required
-                                                onChange={(e) => setpassword(e.target.value)}
                                             />
                                         </div>
                                         <div>
                                             <Label htmlFor="confirm-password">Confirm Password</Label>
                                             <Input
+                                                onChange={(e) =>setconfirmpassword(e.target.value)}
                                                 id = "confirm-password"
                                                 name = "comfirm-password"
                                                 type = "password"
                                                 placeholder = "Enter Confirm Password"
                                                 className = "rounded-lg border-2"
                                                 required
-                                                onChange={(e) =>setconfirmpassword(e.target.value)}
                                                 />
                                         </div>
                                         <Button type = "submit" className = "w-full bg-black text-white hover:bg-gray-800">
