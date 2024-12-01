@@ -65,7 +65,6 @@ export function NavBar() {
             if(res.ok){
                 console.log("logout success");
                 setIsLoggedIn(false);
-                checksession();
             }else{
                 console.error("error : ",error);
             }
