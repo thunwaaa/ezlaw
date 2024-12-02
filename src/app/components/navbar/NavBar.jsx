@@ -75,6 +75,7 @@ export function NavBar() {
             if(res.ok){
                 console.log("logout success");
                 setIsLoggedIn(false);
+                router.push("/");
             }else{
                 console.error("error : ",error);
             }
