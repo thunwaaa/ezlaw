@@ -69,5 +69,9 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  .library-class{
+    all: unset !important;
+    display: revert !important;
+  }
 }
 
