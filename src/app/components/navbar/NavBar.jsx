@@ -19,6 +19,9 @@ import Image from "next/image";
 import { Playfair_Display } from "next/font/google";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import AuthButton from "../Authbutton";
+
+
 
 const playfair_display = Playfair_Display({
     subsets: ['latin','latin-ext'],
@@ -48,6 +51,7 @@ export function NavBar() {
     const [error, setError] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userRole, setUserRole] = useState(null);
 
     const router = useRouter();
 
@@ -144,8 +148,25 @@ export function NavBar() {
         }
     }
 
+    useEffect(() => {
+        const fetchUserRole = async () => {
+            try {
+                const response = await axios.get('/api/user/role', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`, // ส่ง Token
+                    },
+                });
+                setUserRole(response.data);
+                setIsLoggedIn(true);
+            } catch (error) {
+                setUserRole(null);
+                setIsLoggedIn(false);
+            }
+        };
 
-    
+        fetchUserRole();
+    }, []);
+
   return (
     <div className="flex justify-between mx-8 my-5">
         <div className="flex justify-start text-5xl font-extrabold text-red-900 ">
@@ -177,14 +198,15 @@ export function NavBar() {
                         className="absolute -top-4 right-48"                   
                     /> 
                     
-                        <Link 
-                        href='/consult' 
+                    <Link 
+                        href={isLoggedIn && userRole === 'Membership' ? '/consult' : '/planMember'} 
                         className=" border border-slate-950 rounded-full px-3 py-1 font-semibold hover:text-slate-500 hover:border-slate-500 transition duration-300 mr-3">
                             ปรึกษาทนาย
-                        </Link>
+                    </Link>
                     
                 </NavigationMenuItem> 
-                <Menubar className="library-class">
+                <AuthButton />
+                {/* <Menubar className="library-class">
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         {isLoggedIn ?(
                             
@@ -327,7 +349,7 @@ export function NavBar() {
                             </Tabs>
                         </DialogContent>
                     </Dialog>
-                </Menubar>
+                </Menubar> */}
             </NavigationMenuList>
         </NavigationMenu>
         
