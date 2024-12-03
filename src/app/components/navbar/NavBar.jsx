@@ -19,6 +19,9 @@ import Image from "next/image";
 import { Playfair_Display } from "next/font/google";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import AuthButton from "../Authbutton";
+
+
 
 const playfair_display = Playfair_Display({
     subsets: ['latin','latin-ext'],
@@ -49,6 +52,7 @@ export function NavBar() {
     const [success,setSuccess] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userRole, setUserRole] = useState(null);
 
     const router = useRouter();
 
@@ -144,8 +148,25 @@ export function NavBar() {
         }
     }
 
+    useEffect(() => {
+        const fetchUserRole = async () => {
+            try {
+                const response = await axios.get('/api/user/role', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`, // ส่ง Token
+                    },
+                });
+                setUserRole(response.data);
+                setIsLoggedIn(true);
+            } catch (error) {
+                setUserRole(null);
+                setIsLoggedIn(false);
+            }
+        };
 
-    
+        fetchUserRole();
+    }, []);
+
   return (
     <div className="flex justify-between mx-8 my-5">
         <div className="flex justify-start text-5xl font-extrabold text-red-900 ">
@@ -177,14 +198,15 @@ export function NavBar() {
                         className="absolute -top-4 right-48"                   
                     /> 
                     
-                        <Link 
-                        href='/consult' 
+                    <Link 
+                        href={isLoggedIn && userRole === 'Membership' ? '/consult' : '/planMember'} 
                         className=" border border-slate-950 rounded-full px-3 py-1 font-semibold hover:text-slate-500 hover:border-slate-500 transition duration-300 mr-3">
                             ปรึกษาทนาย
-                        </Link>
+                    </Link>
                     
                 </NavigationMenuItem> 
-                <Menubar className="library-class">
+                <AuthButton />
+                {/* <Menubar className="library-class">
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         {isLoggedIn ?(
                             
@@ -218,116 +240,118 @@ export function NavBar() {
                                 </DialogTrigger>
                             
                         )}
-                        <DialogContent className="max-w-[425px] p-5 ">
-                            <Tabs defaultValue="signin" className="w-full text-xl">
-                                <TabsList className="grid w-full grid-cols-2 mt-4 ">
-                                    <TabsTrigger value="signin">Sign In</TabsTrigger>
-                                    <TabsTrigger value="signup">Sign Up</TabsTrigger>
-                                </TabsList>
+                        <DialogTitle>
+                            <DialogContent id='loginPopup' className="max-w-[425px] p-5 ">
+                                <Tabs defaultValue="signin" className="w-full text-xl">
+                                    <TabsList className="grid w-full grid-cols-2 mt-4 ">
+                                        <TabsTrigger value="signin">Sign In</TabsTrigger>
+                                        <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                                    </TabsList>
 
-                                <TabsContent value="signin" className="p-5">
-                                    <form onClick={loginSubmit} className="space-y-4">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="email">Email</Label>
-                                            <Input
-                                                onChange={(e) => setemail(e.target.value)}
-                                                id="email"
-                                                name="email"
-                                                type="email"
-                                                placeholder="Enter your Email"
-                                                className="rounded-lg border-2"
-                                                required
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="password">Password</Label>
-                                            <Input
-                                                onChange={(e) => setpassword(e.target.value)}
-                                                id="password"
-                                                name="password"
-                                                type="password"
-                                                placeholder="Enter your password"
-                                                className="rounded-lg border-2"
-                                                required
-                                            />
-                                        </div>
-                                        <Button type="submit" className="w-full bg-black text-white hover:bg-gray-800">
-                                            Sign In
-                                        </Button>
-                                    </form>
-                                </TabsContent>
+                                    <TabsContent value="signin" className="p-5">
+                                        <form onClick={loginSubmit} className="space-y-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="email">Email</Label>
+                                                <Input
+                                                    onChange={(e) => setemail(e.target.value)}
+                                                    id="email"
+                                                    name="email"
+                                                    type="email"
+                                                    placeholder="Enter your Email"
+                                                    className="rounded-lg border-2"
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="password">Password</Label>
+                                                <Input
+                                                    onChange={(e) => setpassword(e.target.value)}
+                                                    id="password"
+                                                    name="password"
+                                                    type="password"
+                                                    placeholder="Enter your password"
+                                                    className="rounded-lg border-2"
+                                                    required
+                                                />
+                                            </div>
+                                            <Button type="submit" className="w-full bg-black text-white hover:bg-gray-800">
+                                                Sign In
+                                            </Button>
+                                        </form>
+                                    </TabsContent>
 
-                                <TabsContent value="signup" className="p-6">
-                                    <form onClick={registerSubmit} className="space-y-4">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="firstName">First Name</Label>
-                                            <Input
-                                                onChange={(e) => setfirstname(e.target.value)}
-                                                id="firstname"
-                                                name="firstname"
-                                                type="text"
-                                                placeholder="Enter your Name"
-                                                className="rounded-lg border-2"
-                                                required
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="lastName">Last Name</Label>
-                                            <Input
-                                                onChange={(e) => setlastname(e.target.value)}
-                                                id="lastname"
-                                                name="lastname"
-                                                type="text"
-                                                placeholder="Enter your Name"
-                                                className="rounded-lg border-2"
-                                                required
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="signup-email">Email</Label>
-                                            <Input
-                                                onChange={(e) => setemail(e.target.value)}
-                                                id="email"
-                                                name = "email"
-                                                type = "email"
-                                                placeholder = "e.g John@gmail.com"
-                                                className = "rounded-lg border-2"
-                                                required
-                                            />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="signup-password">Password</Label>
-                                            <Input
-                                                onChange={(e) => setpassword(e.target.value)}
-                                                id = "password"
-                                                name = "password"
-                                                type = "password"
-                                                placeholder = "Enter your password"
-                                                className = "rounded-lg border-2"
-                                                required
-                                            />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="confirm-password">Confirm Password</Label>
-                                            <Input
-                                                onChange={(e) =>setconfirmpassword(e.target.value)}
-                                                id = "confirm-password"
-                                                name = "comfirm-password"
-                                                type = "password"
-                                                placeholder = "Enter Confirm Password"
-                                                className = "rounded-lg border-2"
-                                                required
-                                            />
-                                        </div>
-                                        <Button type = "submit" className = "w-full bg-black text-white hover:bg-gray-800">
-                                            Sign Up
-                                        </Button>
-                                    </form>
-                                </TabsContent>
-                            </Tabs>
-                        </DialogContent>
+                                    <TabsContent value="signup" className="p-6">
+                                        <form onClick={registerSubmit} className="space-y-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="firstName">First Name</Label>
+                                                <Input
+                                                    onChange={(e) => setfirstname(e.target.value)}
+                                                    id="firstname"
+                                                    name="firstname"
+                                                    type="text"
+                                                    placeholder="Enter your Name"
+                                                    className="rounded-lg border-2"
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="lastName">Last Name</Label>
+                                                <Input
+                                                    onChange={(e) => setlastname(e.target.value)}
+                                                    id="lastname"
+                                                    name="lastname"
+                                                    type="text"
+                                                    placeholder="Enter your Name"
+                                                    className="rounded-lg border-2"
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="signup-email">Email</Label>
+                                                <Input
+                                                    onChange={(e) => setemail(e.target.value)}
+                                                    id="email"
+                                                    name = "email"
+                                                    type = "email"
+                                                    placeholder = "e.g John@gmail.com"
+                                                    className = "rounded-lg border-2"
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <Label htmlFor="signup-password">Password</Label>
+                                                <Input
+                                                    onChange={(e) => setpassword(e.target.value)}
+                                                    id = "password"
+                                                    name = "password"
+                                                    type = "password"
+                                                    placeholder = "Enter your password"
+                                                    className = "rounded-lg border-2"
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <Label htmlFor="confirm-password">Confirm Password</Label>
+                                                <Input
+                                                    onChange={(e) =>setconfirmpassword(e.target.value)}
+                                                    id = "confirm-password"
+                                                    name = "comfirm-password"
+                                                    type = "password"
+                                                    placeholder = "Enter Confirm Password"
+                                                    className = "rounded-lg border-2"
+                                                    required
+                                                />
+                                            </div>
+                                            <Button type = "submit" className = "w-full bg-black text-white hover:bg-gray-800">
+                                                Sign Up
+                                            </Button>
+                                        </form>
+                                    </TabsContent>
+                                </Tabs>
+                            </DialogContent>
+                        </DialogTitle>
                     </Dialog>
-                </Menubar>
+                </Menubar> */}
             </NavigationMenuList>
         </NavigationMenu>
         
