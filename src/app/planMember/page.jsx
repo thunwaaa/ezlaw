@@ -38,27 +38,15 @@ const Pricing = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showLoginPopup, setShowLoginPopup] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
-    const [checkingSession, setCheckingSession] = useState(true); // สถานะการตรวจสอบ session
 
     const checksession = async () => {
         try {
             const res = await fetch("http://localhost:8080/api/auth/check-session", {
                 method: "GET",
-                headers: {
-                    'Authorization': `Bearer ${yourToken}`, // เพิ่ม Authorization header ถ้าจำเป็น
-                },
                 credentials: "include", // หากใช้คุกกี้
             });
     
-            if (!res.ok) {
-                console.error("Server responded with status:", res.status);
-                setIsLoggedIn(false);
-                setCheckingSession(false);
-                return false;
-            }
-    
-            const data = await res.json().catch(() => ({}));
-            if (data.status === "loggedIn") {
+            if (res.ok) {
                 setIsLoggedIn(true);
             } else {
                 setIsLoggedIn(false);
@@ -66,37 +54,30 @@ const Pricing = () => {
         } catch (error) {
             console.error("Error:", error);
             setIsLoggedIn(false);
-        } finally {
-            setCheckingSession(false);
-        }
     };
-
+    }
     useEffect(() => {
         checksession();
     }, []);
 
     const handleSubscribe = async (planIndex) => {
-        if (isProcessing || checkingSession) return;
+        if (isProcessing) return;
         setIsProcessing(true);
     
         try {
             if (planIndex < 0 || planIndex >= plans.length) {
                 console.error('Invalid planIndex:', planIndex);
-                setIsProcessing(false);
                 return;
             }
     
             const selectedPlan = plans[planIndex];
     
-            // ตรวจสอบว่า user ถูกล็อกอินหรือไม่
-            console.log("isLoggedIn:", isLoggedIn);
             if (isLoggedIn) {
                 if (!selectedPlan.link) {
                     console.error('Link is empty for planIndex:', planIndex);
-                    setIsProcessing(false);
                     return;
                 }
-                const link = selectedPlan.link + '?prefilled_email=' + checksession?.user?.email;
+                const link = selectedPlan.link + '?prefilled_email=' + encodeURIComponent('user@example.com'); // แทนด้วยอีเมลจริง
                 console.log("Link to open:", link);
                 window.open(link, '_blank'); // เปิดลิงก์ในแท็บใหม่
             } else {
@@ -108,6 +89,7 @@ const Pricing = () => {
             setIsProcessing(false);
         }
     };
+    
     
     
     const closeLoginPopup = () => {
@@ -140,7 +122,7 @@ const Pricing = () => {
                                 </h1>
                                     <button className="rounded-xl mt-6 w-64 h-12 bg-[#2C2C2C] text-white text-lg" 
                                         onClick={() => handleSubscribe(0)}
-                                        disabled={isProcessing || checkingSession} // ปิดปุ่มจนกว่าจะตรวจสอบเสร็จ
+                                        disabled={isProcessing} // ปิดปุ่มจนกว่าจะตรวจสอบเสร็จ
                                     >
                                         Subscribe
                                     </button>
@@ -152,7 +134,7 @@ const Pricing = () => {
                                 </h1>
                                     <button className="rounded-xl mt-6 w-64 h-12 bg-white text-slate-950 text-lg"  
                                         onClick={() => handleSubscribe(1)}
-                                        disabled={isProcessing || checkingSession} // ปิดปุ่มจนกว่าจะตรวจสอบเสร็จ 
+                                        disabled={isProcessing} // ปิดปุ่มจนกว่าจะตรวจสอบเสร็จ 
                                     >
                                         Subscribe
                                     </button>
@@ -164,7 +146,7 @@ const Pricing = () => {
                                 </h1>
                                     <button className="rounded-xl mt-6 w-64 h-12 bg-[#2C2C2C] text-white text-lg " 
                                         onClick={() => handleSubscribe(2)}
-                                        disabled={isProcessing || checkingSession} // ปิดปุ่มจนกว่าจะตรวจสอบเสร็จ
+                                        disabled={isProcessing} // ปิดปุ่มจนกว่าจะตรวจสอบเสร็จ
                                     >
                                         Subscribe
                                     </button>
