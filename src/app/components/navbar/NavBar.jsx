@@ -148,22 +148,32 @@ export function NavBar() {
         }
     }
 
-    useEffect(() => {
-        const fetchUserRole = async () => {
-            try {
-                const response = await axios.get('/api/user/role', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`, // ส่ง Token
-                    },
-                });
-                setUserRole(response.data);
-                setIsLoggedIn(true);
-            } catch (error) {
-                setUserRole(null);
+    const fetchUserRole = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/auth/user_role", {
+                method: "GET",
+                credentials: "include",
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("User role fetched successfully:", data);
+                setUserRole(data.role);
+                setIsLoggedIn(true);  
+            } else {
+                const errorData = await response.json();
+                console.error("Error fetching user role:", errorData);
+                setUserRole(null);   
                 setIsLoggedIn(false);
             }
-        };
+        } catch (error) {
+            console.error("Network or server error:", error);
+            setUserRole(null);        
+            setIsLoggedIn(false);
+        }
+    };
 
+    useEffect(() => {
         fetchUserRole();
     }, []);
 
