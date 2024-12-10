@@ -49,10 +49,9 @@ export function NavBar() {
     const [phone, setphone] = useState("");
     const [gender, setgender] = useState("");
     const [error, setError] = useState("");
-    const [success,setSuccess] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userRole, setUserRole] = useState(null);
+    const [userRole, setUserRole] = useState('');
 
     const router = useRouter();
 
@@ -85,6 +84,7 @@ export function NavBar() {
             if(res.ok){
                 console.log("logout success");
                 setIsLoggedIn(false);
+                router.push("/");
             }else{
                 console.error("error : ",error);
             }
@@ -149,23 +149,18 @@ export function NavBar() {
     }
 
     useEffect(() => {
-        const fetchUserRole = async () => {
-            try {
-                const response = await axios.get('/api/user/role', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`, // ส่ง Token
-                    },
-                });
-                setUserRole(response.data);
-                setIsLoggedIn(true);
-            } catch (error) {
-                setUserRole(null);
-                setIsLoggedIn(false);
-            }
+        const checkUserRole = async () => {
+          try {
+            const response = await axios.get('/api/auth/checkRole');
+            setUserRole(response.data.role);
+            setIsLoggedIn(true);
+          } catch (error) {
+            setIsLoggedIn(false);
+          }
         };
-
-        fetchUserRole();
-    }, []);
+    
+        checkUserRole();
+      }, []);
 
   return (
     <div className="flex justify-between mx-8 my-5">
