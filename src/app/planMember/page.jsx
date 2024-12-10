@@ -3,85 +3,117 @@
 import { useEffect, useState} from 'react';
 import { Check } from 'lucide-react'
 import styles from './Pricing.module.css'; // import CSS module
+import SubscriptionButton from 'app/components/SubscriptionButton';
+import { loadStripe } from '@stripe/stripe-js';
 
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 
 export const plans = [
     {
-        link: process.env.NODE_ENV === 'development' ? 
-            'https://buy.stripe.com/test_fZedSzak77cm0Ks148' : '',
-        priceId: process.env.NODE_ENV === 'development' ? 
-            'price_1QRg0fGLXc22ItMyOrM9mzrf' : '',
+        link: process.env.NODE_ENV === 'development' ? 'https://buy.stripe.com/test_fZedSzak77cm0Ks148' : '',
+        priceId: process.env.NODE_ENV === 'development' ? 'price_1QRg0fGLXc22ItMyOrM9mzrf' : '',
         price: 29,
-        duration: '/weekly'
+        duration: '/weekly',
     },
     {
-        link: process.env.NODE_ENV === 'development' ? 
-            'https://buy.stripe.com/test_5kAg0HgIv0NY50I6ot' : '',
-        priceId: process.env.NODE_ENV === 'development' ? 
-            'price_1QRg1sGLXc22ItMy9O01X6Lz' : '',
-
+        link: process.env.NODE_ENV === 'development' ? 'https://buy.stripe.com/test_5kAg0HgIv0NY50I6ot' : '',
+        priceId: process.env.NODE_ENV === 'development' ? 'price_1QRg1sGLXc22ItMy9O01X6Lz' : '',
         price: 59,
-        duration: '/monthly'
+        duration: '/monthly',
     },
     {
-        link: process.env.NODE_ENV === 'development' ? 
-            'https://buy.stripe.com/test_7sIcOv3VJgMW64M7sy' : '',
-        priceId: process.env.NODE_ENV === 'development' ? 
-            'price_1QRg2LGLXc22ItMy3JAZd9u1' : '',
+        link: process.env.NODE_ENV === 'development' ? 'https://buy.stripe.com/test_7sIcOv3VJgMW64M7sy' : '',
+        priceId: process.env.NODE_ENV === 'development' ? 'price_1QRg2LGLXc22ItMy3JAZd9u1' : '',
         price: 99,
-        duration: '/yearly'
-    }
+        duration: '/yearly',
+    },
 ];
 
 const Pricing = () => {
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userEmail, setUserEmail] = useState(null);
+    const [userRole, setUserRole] = useState(null);
+    const [userId, setUserId] = useState(null);
     const [showLoginPopup, setShowLoginPopup] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isMembership, setIsMembership] = useState(false);
 
-    const checksession = async () => {
+    const checkSession = async () => {
         try {
             const res = await fetch("http://localhost:8080/api/auth/check-session", {
                 method: "GET",
-                credentials: "include", // หากใช้คุกกี้
+                credentials: "include", // Important for sending cookies
             });
-    
+
             if (res.ok) {
+                const data = await res.json();
                 setIsLoggedIn(true);
+                setUserEmail(data.email);
+                setUserRole(data.role);
+                setUserId(data.userId);
+                setIsMembership(data.role === "Membership"); // Example condition
             } else {
                 setIsLoggedIn(false);
+                setUserEmail(null);
+                setUserRole(null);
+                setUserId(null);
             }
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error checking session:", error);
             setIsLoggedIn(false);
+            setUserEmail(null);
+            setUserRole(null);
+            setUserId(null);
+        }
     };
-    }
-    useEffect(() => {
-        checksession();
-    }, []);
+
+    const checkMembershipStatus = async () => {
+        try {
+            const res = await fetch("http://localhost:8080/api/auth/membership-status", {
+                method: "GET",
+                credentials: "include",
+            });
+            const data = await res.json();
+            setIsMembership(data.isMembership);
+        } catch (error) {
+            console.error("Error checking membership status:", error);
+        }
+    };    
 
     const handleSubscribe = async (planIndex) => {
         if (isProcessing) return;
         setIsProcessing(true);
-    
+
         try {
-            if (planIndex < 0 || planIndex >= plans.length) {
-                console.error('Invalid planIndex:', planIndex);
-                return;
-            }
-    
-            const selectedPlan = plans[planIndex];
-    
             if (isLoggedIn) {
+                const selectedPlan = plans[planIndex];
                 if (!selectedPlan.link) {
                     console.error('Link is empty for planIndex:', planIndex);
                     return;
                 }
-                const link = selectedPlan.link + '?prefilled_email=' + encodeURIComponent('user@example.com'); // แทนด้วยอีเมลจริง
-                console.log("Link to open:", link);
-                window.open(link, '_blank'); // เปิดลิงก์ในแท็บใหม่
+
+                const response = await fetch("/api/create-checkout-session", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ priceId: selectedPlan.priceId, userEmail }),
+                });
+
+                const session = await response.json();
+
+                if (session.error) {
+                    console.error(session.error);
+                    return;
+                }
+
+                const stripe = await stripePromise;
+                const result = await stripe.redirectToCheckout({ sessionId: session.id });
+
+                if (result.error) {
+                    console.error(result.error.message);
+                }
             } else {
-                setShowLoginPopup(true); // แสดงป๊อปอัพให้ล็อกอิน
+                setShowLoginPopup(true);
             }
         } catch (error) {
             console.error("Unexpected error:", error);
@@ -89,8 +121,20 @@ const Pricing = () => {
             setIsProcessing(false);
         }
     };
+
+    useEffect(() => {
+        checkSession();
+    }, []);
     
-    
+    // Membership view
+    if (isMembership) {
+        return (
+            <section className="text-center py-12">
+                <h2 className="text-2xl font-bold">คุณเป็นสมาชิกแล้ว</h2>
+                {/* Add membership features here */}
+            </section>
+        );
+    }
     
     const closeLoginPopup = () => {
         setShowLoginPopup(false); // ปิดป๊อปอัพ
