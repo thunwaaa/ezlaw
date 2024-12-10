@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 
 
@@ -10,12 +11,32 @@ function EditProfile() {
     const [isEditing, setIsEditing ] = useState(false)
 
     const [profile, setProfile] = useState({
-        firstname: "Elizabeth",
-        lastname: "Arthur",
-        gender: "female",
-        email: "Alice0513@gmail.com",
-        phone: "033 333 333",
+        firstname: "",
+        lastname: "",
+        gender: "",
+        email: "",
+        phone: "",
     })
+
+    useEffect(() => {
+        const fetchprofile = async () => {
+            try{
+                const res = await fetch("http://localhost:8080/api/auth/profile",{
+                    method: "GET",
+                    credentials: "include",
+                });
+                if(!res.ok){
+                    console.log("fail fetch profile");
+                }
+
+                const data = await res.json();
+                setProfile(data);
+            }catch(error){
+                console.error("error: ",error);
+            }
+        };
+        fetchprofile();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -24,6 +45,30 @@ function EditProfile() {
             [name]: value,
         }))
     }
+
+    const toggleprofile = async () => {
+        if(isEditing){
+            try{
+                const res = await fetch("http://localhost:8080/api/auth/edit-profile", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type" : "application/json"
+                    },
+                    credentials: "include",
+                    body: JSON.stringify(profile),
+                });
+                if(res.ok){
+                    const updateprofile = await res.json();
+                    setProfile(updateprofile);
+                    console.log("update profile sucsecc");
+                }
+            }catch(error){  
+                console.error("error : ", error);
+            }
+        }
+        setIsEditing(!isEditing);
+    };
+
   return (
     
         <div className=' w-11/12 flex justify-center mt-10 mx-auto pb-20'>
@@ -36,7 +81,7 @@ function EditProfile() {
                     className='fixed left-[750] mt-20 rounded-full'
                 />
                 <button 
-                    onClick={() => setIsEditing(!isEditing)} 
+                    onClick={toggleprofile} 
                     className={`bg-gray-500 fixed w-56 p-3 rounded-xl mt-96 text-2xl -ml-[430] ${
                         isEditing ? "bg-slate-950 text-white" : "bg-slate-300 border-gray-300"
                     }`}>
