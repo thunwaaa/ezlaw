@@ -58,6 +58,7 @@ function EditProfile() {
                 if (res.ok) {
                     const updatedProfile = await res.json();
                     setProfile(updatedProfile);
+                    window.location.reload();
                     console.log("Updated lawyer profile successfully");
                 } else {
                     console.error("Failed to update lawyer profile");
@@ -163,14 +164,35 @@ function EditProfile() {
                     <label htmlFor="email" className="block text-2xl font-medium">
                         E-mail
                     </label>
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={profile.lawyerEmail}
-                        readOnly
-                        className={`mt-1 block w-full p-3 border rounded-md text-xl bg-gray-100 border-gray-300`}
-                    />
+                    <p>
+                        {profile.lawyerEmail}
+                    </p>
+                </div>
+                <div className="space-y-1">
+                    <label 
+                        htmlFor="info" 
+                        className="block text-lg font-semibold text-gray-700"
+                    >
+                        Information
+                    </label>
+                    {isEditing ? (
+                        <textarea
+                            id="info"
+                            name="info"
+                            value={profile.info}
+                            onChange={handleChange}
+                            placeholder="Enter your information"
+                            rows={4}
+                            className="mt-1 block w-full p-2 border border-gray-300 rounded-md text-base resize-none overflow-y-auto focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        />
+                    ) : (
+                        <div
+                            id="info"
+                            className="mt-1 block w-full p-2 text-base bg-gray-50 border border-gray-200 rounded-md min-h-[44px] max-h-[200px] overflow-y-auto"
+                        >
+                            {profile.info || 'No information provided'}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

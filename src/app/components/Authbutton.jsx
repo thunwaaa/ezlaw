@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from 'lucide-react';
 
 export const AuthButton = () => {
     const [firstname, setFirstname] = useState("");
@@ -32,6 +33,8 @@ export const AuthButton = () => {
     const [lawyerEmail, setLawyerEmail] = useState("");
     const [lawyerPassword, setLawyerPassword] = useState("");
     const [lawyerRole, setlawyerRole] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
+
 
     const router = useRouter();
 
@@ -95,7 +98,7 @@ export const AuthButton = () => {
             if (res.ok) {
                 console.log("Logout success");
                 setIsLoggedIn(false);
-                router.push("/");
+                router.push("/")
                 window.location.reload();
             } else {
                 console.error("Logout error");
@@ -287,16 +290,27 @@ export const AuthButton = () => {
                                         required
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="password">Password</Label>
-                                    <Input
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        id="password"
-                                        type="password"
-                                        placeholder="Enter your Password"
-                                        className="rounded-lg border-2"
-                                        required
-                                    />
+                                <div className="space-y-2 relative">
+                                <Label htmlFor="password">Password</Label>
+                                <Input
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    id="password"
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter your Password"
+                                    className="rounded-lg border-2 pr-10"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-11 right-2 flex items-center text-gray-500 hover:text-gray-700"
+                                >
+                                    {showPassword ? (
+                                    <EyeOff className="h-5 w-5" />
+                                    ) : (
+                                    <Eye className="h-5 w-5" />
+                                    )}
+                                </button>
                                 </div>
                                 {errorMessage && (
                                     <div className="text-red-500 text-sm">{errorMessage}</div>
@@ -313,7 +327,7 @@ export const AuthButton = () => {
                                 <div className="space-y-2">
                                 <Label htmlFor="firstName">First Name</Label>
                                 <Input
-                                    onChange={(e) => setfirstname(e.target.value)}
+                                    onChange={(e) => setFirstname(e.target.value)}
                                     id="firstname"
                                     name="firstname"
                                     type="text"
@@ -325,7 +339,7 @@ export const AuthButton = () => {
                             <div className="space-y-2">
                                 <Label htmlFor="lastName">Last Name</Label>
                                 <Input
-                                    onChange={(e) => setlastname(e.target.value)}
+                                    onChange={(e) => setLastname(e.target.value)}
                                     id="lastname"
                                     name="lastname"
                                     type="text"
@@ -337,7 +351,7 @@ export const AuthButton = () => {
                             <div className="space-y-2">
                                 <Label htmlFor="signup-email">Email</Label>
                                 <Input
-                                    onChange={(e) => setemail(e.target.value)}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     id="email"
                                     name = "email"
                                     type = "email"
@@ -349,22 +363,33 @@ export const AuthButton = () => {
                             <div>
                                 <Label htmlFor="signup-password">Password</Label>
                                 <Input
-                                    onChange={(e) => setpassword(e.target.value)}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     id = "password"
                                     name = "password"
-                                    type = "password"
+                                    type={showPassword ? "text" : "password"}
                                     placeholder = "Enter your password"
                                     className = "rounded-lg border-2"
                                     required
                                 />
                             </div>
+                            <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-17 right-12 flex items-center text-gray-500 hover:text-gray-700"
+                                >
+                                    {showPassword ? (
+                                    <EyeOff className="h-5 w-5" />
+                                    ) : (
+                                    <Eye className="h-5 w-5" />
+                                    )}
+                                </button>
                             <div>
                                 <Label htmlFor="confirm-password">Confirm Password</Label>
                                 <Input
-                                    onChange={(e) =>setconfirmpassword(e.target.value)}
+                                    onChange={(e) =>setConfirmpassword(e.target.value)}
                                     id = "confirm-password"
                                     name = "comfirm-password"
-                                    type = "password"
+                                    type={showPassword ? "text" : "password"}
                                     placeholder = "Enter Confirm Password"
                                     className = "rounded-lg border-2"
                                     required
@@ -398,12 +423,23 @@ export const AuthButton = () => {
                                     <Input
                                         onChange={(e) => setLawyerPassword(e.target.value)}
                                         id="lawyer-password"
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         placeholder="Enter your lawyer password"
                                         className="rounded-lg border-2"
                                         required
                                     />
                                 </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-56 right-12 flex items-center text-gray-500 hover:text-gray-700"
+                                >
+                                    {showPassword ? (
+                                    <EyeOff className="h-5 w-5" />
+                                    ) : (
+                                    <Eye className="h-5 w-5" />
+                                    )}
+                                </button>
                                 {errorMessage && (
                                     <div className="text-red-500 text-sm">{errorMessage}</div>
                                 )}
