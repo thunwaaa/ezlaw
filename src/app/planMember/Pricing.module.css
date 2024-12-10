@@ -1,0 +1,11 @@
+.popupOverlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.popupContent {
+    @apply bg-white p-8 rounded-xl shadow-lg text-center relative w-96 h-48;
+}
+
+.popupContent button {
+    @apply mt-8 px-6 py-3 bg-primary text-white rounded-md hover:bg-opacity-90;
+}

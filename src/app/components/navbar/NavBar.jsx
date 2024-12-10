@@ -1,10 +1,17 @@
 'use client'
 
 import Link from "next/link";
-import { NavigationMenu, NavigationMenuContent,
-  NavigationMenuItem,NavigationMenuList,NavigationMenuTrigger, NavigationMenuLink } from "@/components/ui/navigation-menu";
+import { NavigationMenu, NavigationMenuContent,NavigationMenuItem,NavigationMenuList,NavigationMenuTrigger} from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
-import { Dialog,DialogContent,DialogTrigger } from "@/components/ui/dialog";
+import {
+    Menubar,
+    MenubarContent,
+    MenubarItem,
+    MenubarMenu,
+    MenubarTrigger
+  } from "@/components/ui/menubar"
+  
+import { Dialog,DialogTitle,DialogContent,DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,15 +19,16 @@ import Image from "next/image";
 import { Playfair_Display } from "next/font/google";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DialogHeader, DialogTitle , DialogDescription } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
+import AuthButton from "../Authbutton";
+
+
 
 const playfair_display = Playfair_Display({
     subsets: ['latin','latin-ext'],
     weight: ['400','700'],
 })
 
-const กฏหมาย = [
+const laws = [
     {
       title: "กฏหมายอาญา",
       href: "/crime/crime1"
@@ -41,9 +49,9 @@ export function NavBar() {
     const [phone, setphone] = useState("");
     const [gender, setgender] = useState("");
     const [error, setError] = useState("");
-    const [success,setSuccess] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userRole, setUserRole] = useState(null);
 
     const router = useRouter();
 
@@ -76,6 +84,7 @@ export function NavBar() {
             if(res.ok){
                 console.log("logout success");
                 setIsLoggedIn(false);
+                router.push("/");
             }else{
                 console.error("error : ",error);
             }
@@ -139,8 +148,35 @@ export function NavBar() {
         }
     }
 
+    const fetchUserRole = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/auth/user_role", {
+                method: "GET",
+                credentials: "include",
+            });
 
-    
+            if (response.ok) {
+                const data = await response.json();
+                console.log("User role fetched successfully:", data);
+                setUserRole(data.role);
+                setIsLoggedIn(true);  
+            } else {
+                const errorData = await response.json();
+                console.error("Error fetching user role:", errorData);
+                setUserRole(null);   
+                setIsLoggedIn(false);
+            }
+        } catch (error) {
+            console.error("Network or server error:", error);
+            setUserRole(null);        
+            setIsLoggedIn(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchUserRole();
+    }, []);
+
   return (
     <div className="flex justify-between mx-8 my-5">
         <div className="flex justify-start text-5xl font-extrabold text-red-900 ">
@@ -155,15 +191,14 @@ export function NavBar() {
                     <NavigationMenuTrigger className = 'py-5 text-xl hover:text-slate-500 hover:bg-none transition duration-300 content-center rounded-full'>กฏหมาย</NavigationMenuTrigger>
                     <NavigationMenuContent>
                         <ul className="  w-[100px] text-base  p-4 md:w-[200px] xl:w-[200px] ">
-                            {กฏหมาย.map((กฏหมาย, index) => (
+                            {laws.map((laws, index) => (
                                 <li key={index}>
-                                    <Link href={กฏหมาย.href} className=" hover:text-slate-500 transition duration-300">{กฏหมาย.title}</Link>
+                                    <Link href={laws.href} className=" hover:text-slate-500 transition duration-300">{laws.title}</Link>
                                 </li>
                             ))}
                         </ul>
                     </NavigationMenuContent>
                 </NavigationMenuItem>
-                
                 <NavigationMenuItem>
                     <Image
                         src="/crownIcon.png"
@@ -173,42 +208,47 @@ export function NavBar() {
                         className="absolute -top-4 right-48"                   
                     /> 
                     
-                        <Link 
-                        href='/consult' 
+                    <Link 
+                        href={isLoggedIn && userRole === 'Membership' ? '/consult' : '/planMember'} 
                         className=" border border-slate-950 rounded-full px-3 py-1 font-semibold hover:text-slate-500 hover:border-slate-500 transition duration-300 mr-3">
                             ปรึกษาทนาย
-                        </Link>
+                    </Link>
                     
                 </NavigationMenuItem> 
-                <NavigationMenuItem>
+                <AuthButton />
+                {/* <Menubar className="library-class">
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         {isLoggedIn ?(
-                            <>
-                                <NavigationMenuItem>
-                                    <NavigationMenuTrigger className = 'py-5 text-xl hover:text-slate-500 hover:bg-none transition duration-300 content-center rounded-full'>
+                            
+                                <MenubarMenu>
+                                    <MenubarTrigger className = "py-1 w-24 text-lg font-semibold border border-slate-950 hover:text-slate-500 hover:border-slate-500 hover:bg-none transition duration-300 justify-center rounded-full">
                                         Profile
-                                    </NavigationMenuTrigger>
-                                    <NavigationMenuContent>
+                                    </MenubarTrigger>
+                                    <MenubarContent>
                                         <ul className="  w-[200px] text-base  p-4 md:w-[200px] xl:w-[200px] ">
-                                            <li className="mb-1">
-                                                <Link href='/editprofile' className=" hover:text-slate-500 transition duration-300">
-                                                    editprofile
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Button onClick={logoutsubmit} className="w-full text-left hover:bg-grey-100">logout</Button>
-                                            </li>
+                                            <MenubarItem className="library-class">
+                                                <li className="mb-1">
+                                                    <Link href='/editprofile' className=" hover:text-slate-500 transition duration-300 flex justify-center">
+                                                        Edit Profile
+                                                    </Link>
+                                                </li>
+                                            </MenubarItem>
+                                            <MenubarItem className="library-class">
+                                                <li>
+                                                    <Button onClick={logoutsubmit} className="w-full text-center font-semibold hover:bg-red-500 hover:transition-colors hover:duration-500  mt-2">Log out</Button>
+                                                </li>
+                                            </MenubarItem>
                                         </ul>
-                                    </NavigationMenuContent>
-                                </NavigationMenuItem>
-                            </>
+                                    </MenubarContent>
+                                </MenubarMenu>
+                           
                         ):(
-                            <>
+                            
                                 <DialogTrigger 
                                     className=" border border-slate-950 rounded-full px-3 py-1 transition duration-300 hover:text-gray-500 hover:border-slate-500 font-semibold">
                                     Sign in | Sign up
                                 </DialogTrigger>
-                            </>
+                            
                         )}
                         <DialogContent className="max-w-[425px] p-5 ">
                             <Tabs defaultValue="signin" className="w-full text-xl">
@@ -218,7 +258,7 @@ export function NavBar() {
                                 </TabsList>
 
                                 <TabsContent value="signin" className="p-5">
-                                    <form onClick={loginSubmit} className="space-y-4">
+                                    <form onSubmit={loginSubmit} className="space-y-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="email">Email</Label>
                                             <Input
@@ -250,7 +290,7 @@ export function NavBar() {
                                 </TabsContent>
 
                                 <TabsContent value="signup" className="p-6">
-                                    <form onClick={registerSubmit} className="space-y-4">
+                                    <form onSubmit={registerSubmit} className="space-y-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="firstName">First Name</Label>
                                             <Input
@@ -309,7 +349,7 @@ export function NavBar() {
                                                 placeholder = "Enter Confirm Password"
                                                 className = "rounded-lg border-2"
                                                 required
-                                            />
+                                                />
                                         </div>
                                         <Button type = "submit" className = "w-full bg-black text-white hover:bg-gray-800">
                                             Sign Up
@@ -319,7 +359,7 @@ export function NavBar() {
                             </Tabs>
                         </DialogContent>
                     </Dialog>
-                </NavigationMenuItem>
+                </Menubar> */}
             </NavigationMenuList>
         </NavigationMenu>
         
