@@ -51,7 +51,7 @@ export function NavBar() {
     const [error, setError] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userRole, setUserRole] = useState('');
+    const [userRole, setUserRole] = useState(null);
 
     const router = useRouter();
 
@@ -148,19 +148,34 @@ export function NavBar() {
         }
     }
 
-    useEffect(() => {
-        const checkUserRole = async () => {
-          try {
-            const response = await axios.get('/api/auth/checkRole');
-            setUserRole(response.data.role);
-            setIsLoggedIn(true);
-          } catch (error) {
+    const fetchUserRole = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/auth/user_role", {
+                method: "GET",
+                credentials: "include",
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("User role fetched successfully:", data);
+                setUserRole(data.role);
+                setIsLoggedIn(true);  
+            } else {
+                const errorData = await response.json();
+                console.error("Error fetching user role:", errorData);
+                setUserRole(null);   
+                setIsLoggedIn(false);
+            }
+        } catch (error) {
+            console.error("Network or server error:", error);
+            setUserRole(null);        
             setIsLoggedIn(false);
-          }
-        };
-    
-        checkUserRole();
-      }, []);
+        }
+    };
+
+    useEffect(() => {
+        fetchUserRole();
+    }, []);
 
   return (
     <div className="flex justify-between mx-8 my-5">
