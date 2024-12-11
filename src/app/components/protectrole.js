@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import ProtectedPage from './protectpage';// import component เดิม
+import ProtectedPage from './protectpage';
 
 const MembershipPage = ({ children }) => {
     const router = useRouter();
@@ -17,12 +17,13 @@ const MembershipPage = ({ children }) => {
                 if (response.ok) {
                     const data = await response.json();
                     
-                    // ถ้า role ไม่ใช่ MEMBERSHIP ให้ redirect
                     if (data.role !== 'MEMBERSHIP') {
                         router.push('/planMember');
                     }
-                } else {
-                    // ถ้า fetch ไม่สำเร็จให้ redirect ไปหน้า login
+                }else if(data.role !== 'Lawyer'){
+                    router.push('/planMember');
+                } 
+                else {
                     router.push('/');
                 }
             } catch (error) {
@@ -34,7 +35,6 @@ const MembershipPage = ({ children }) => {
         checkMembershipRole();
     }, []);
 
-    // Wrap with ProtectedPage เพื่อยังคงการตรวจสอบ session เดิม
     return (
         <ProtectedPage>
             {children}

@@ -26,7 +26,6 @@ function ConsultCrimeLawyer() {
 
       <div className='rounded-b-2xl w-11/12 h-auto  bg-white px-20 py-10 mx-10 text-left'>
           <SelectLawyer />
-          <SelectLawyer />
       </div>
     </div>
   )
