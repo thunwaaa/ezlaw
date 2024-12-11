@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { validators } from 'tailwind-merge';
 import { fromJSON } from 'postcss';
 import DeleteBtn from 'app/components/DeleteBtn';
+import PropTypes from 'prop-types';
 
 export function EditFolderPage({ params }) {
 
