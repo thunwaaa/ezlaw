@@ -179,9 +179,45 @@ function EditProfile() {
                         </p>
                     </div>
                 </div>
+
+
+                <div>
+                    <label label htmlFor="phone" className="block font-medium text-2xl">
+                        เบอร์โทรศัพท์
+                    </label>
+                    <input
+                        id="phone"
+                        name="phone"
+                        type="text"
+                        value={profile.phone}
+                        onChange={handleChange}
+                        readOnly={!isEditing}
+                        className={`mt-1 block w-full p-3 border rounded-md text-xl ${
+                            isEditing ? "border-gray-400" : "bg-gray-100 border-gray-300"
+                        }`}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="email" className="block text-2xl font-medium">
+                        E-mail
+                    </label>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={profile.email}
+                        onChange={handleChange}
+                        readOnly
+                        className={`mt-1 block w-full p-3 border rounded-md text-xl ${
+                            isEditing ? "border-gray-400" : "bg-gray-100 border-gray-300"
+                        }`}
+                    />
+                </div>
+
             </div>
         </div>
     )
 }
 
 export default EditProfile
+

@@ -276,35 +276,6 @@ function Lawcate() {
           </AccordionItem>
         </Accordion>
       </div>
-      <div className='p-8 ml-10 '>
-          <Accordion type="single" collapsible>
-          <AccordionItem value="item-1">
-            <AccordionTrigger className='pb-2 pt-2 m-3 text-center font-semibold text-3xl mb-12 mt-0'><h1>ลักษณะ 2 บทบัญญัติที่ใช้แก่ความผิดลหุโทษ</h1></AccordionTrigger>
-            <AccordionContent>
-              <h2 className='text-lg font-medium'>มาตรา ๑๐๒</h2>
-              <div className='text-lg'>
-                    <p>ความผิดลหุโทษ คือ ความผิดซึ่งต้องระวางโทษจำคุกไม่เกินหนึ่งเดือน หรือปรับไม่เกินหนึ่งหมื่นบาท หรือทั้งจำทั้งปรับ</p>
-              </div>
-              <h2 className='text-lg font-medium'>มาตรา ๑๐๓</h2>
-              <div className='text-lg'>
-                    <p>บทบัญญัติในลักษณะ ๑ ให้ใช้ในกรณีแห่งความผิดลหุโทษด้วย เว้นแต่ที่บัญญัติไว้ในสามมาตราต่อไปนี้</p>
-              </div>
-              <h2 className='text-lg font-medium'>มาตรา ๑๐๔</h2>
-              <div className='text-lg'>
-                    <p>การกระทำความผิดลหุโทษตามประมวลกฎหมายนี้ แม้กระทำโดยไม่มีเจตนาก็เป็นความผิด เว้นแต่ตามบทบัญญัติความผิดนั้นจะมีความบัญญัติให้เห็นเป็นอย่างอื่น</p>
-              </div>
-              <h2 className='text-lg font-medium'>มาตรา ๑๐๕</h2>
-              <div className='text-lg'>
-                    <p>ผู้ใดพยายามกระทำความผิดลหุโทษ ผู้นั้นไม่ต้องรับโทษ</p>
-              </div>
-              <h2 className='text-lg font-medium'>มาตรา ๑๐๔</h2>
-              <div className='text-lg'>
-                    <p>ผู้สนับสนุนในความผิดลหุโทษไม่ต้องรับโทษ</p>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </div>
     </article>
     
   );
