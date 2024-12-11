@@ -11,31 +11,63 @@ export default function Folder(){
     const [foldername, setFoldername] = useState("");
     const [folderdesc, setFolderdesc] = useState("");
     const [isCreating, setIsCreating] = useState(false);
+    const [userId, setuserid] = useState("");
 
     const router = useRouter();
 
-    const getFolders = async () =>{
+    const fecthuserid =  async () => {
         try{
-            const res = await fetch("http://localhost:3000/api/folders",{
+            const res = await fetch("http://localhost:8080/api/auth/user_id",{
                 method: "GET",
-                cache: "no-store"
-            })
-
-            if(!res.ok){
-                throw new Error("Failed to fetch folders");
+                credentials: "include",
+            });
+            if(res.ok){
+                const data = await res.json();
+                setuserid(data.userId);
             }
-
-            const data = await res.json();
-            setFolderData(data.folders);
-
         }catch(error){
-            console.log("Error loading folders: ",error);
+            console.log("error while fetch id");
         }
     }
+    const getFolders = async () => {
+        try {
+            if (!userId) {
+                console.error("User ID is missing. Cannot fetch folders.");
+                return;
+            }
+    
+            console.log("Fetching folders for userId:", userId); // Debug log
+    
+            const res = await fetch(`http://localhost:3000/api/folders?userId=${userId}`, {
+                method: "GET",
+                cache: "no-store"
+            });
+    
+            const responseData = await res.json(); // Always parse response
+            console.log("Full response:", responseData); // Log full response
+    
+            if (!res.ok) {
+                throw new Error(responseData.message || "Failed to fetch folders");
+            }
+    
+            console.log("Fetched folders:", responseData.folders);
+            setFolderData(responseData.folders || []);
+    
+        } catch (error) {
+            console.error("Detailed error:", error);
+            alert(`Error loading folders: ${error.message}`);
+        }
+    };
+    useEffect(() => {
+        fecthuserid();
+    },[]);
 
     useEffect(() => {
-        getFolders();
-    }, []);
+        if (userId) {
+            getFolders();
+        }
+    }, [userId]);
+
 
 
     const handleSubmit = async (e) => {
@@ -46,16 +78,26 @@ export default function Folder(){
             return;
         };
 
+        if (!userId) {
+            console.error("User ID is missing. Cannot create folder.");
+            alert("Error: User not logged in.");
+            return;
+        }
+
         try{
             const res = await fetch("http://localhost:3000/api/folders",{
                 method:"POST",
                 headers:{
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({foldername,folderdesc})
-            })
+                body: JSON.stringify({foldername,folderdesc,userId}),
+            });
             if(res.ok){
                 router.refresh();
+                setIsCreating(false);
+                setFoldername("");
+                setFolderdesc("");
+                getFolders();
             }else{
                 throw new Error("Failed to create folder");
             }
@@ -73,7 +115,7 @@ export default function Folder(){
 
     return(
         <main className="container mx-auto my-3 mt-10">
-            <h1 className="text-3xl">All your flashcard set</h1>
+            <h1 className="text-4xl font-bold">All your flashcard set</h1>
             <hr className="my-3" />
             <div className="grid grid-cols-4 mt-10 gap-7">
 
@@ -92,21 +134,20 @@ export default function Folder(){
                 )}
 
                 {folderData && folderData.length > 0 ?(
-                    folderData.map(val =>(
-                        <Link key={val._id} href={`/editfolder/${val._id}`}>
-                            <div className="shadow-xl p-10 rounded-xl">
-                                <h4 className="text-2xl">{val.foldername}</h4>
-                                <hr className="border-1 mx-0 px-0" />
-                                <p>{val.folderdesc}</p>
-                                <div className="mt-5">
-                                    <Link className="bg-gray-500 text-white border py-2 rounded-md text-lg px-3" href={`/editfolder/${val._id}`}>Edit</Link>
-                                    <DeleteBtn id={val._id} />
+                    folderData.map((folder) =>(
+                            <Link href={`/editfolder/${folder._id}`} key={folder._id}>
+                                <div className="shadow-xl p-10 rounded-xl">
+                                    <h4 className="text-2xl font-bold">{folder.foldername}</h4>
+                                    <hr className="border-1 mx-0 px-0" />
+                                    <p>{folder.folderdesc}</p>
+                                    <div className="mt-5">
+                                        <DeleteBtn id={folder._id} />
+                                    </div>
                                 </div>
-                            </div>
-                        </Link>
+                            </Link>
                     ))
                 ) : (
-                    <p className="bg-gray-300 p-3 my-3">You do not have any folders yet.</p>
+                    <p className="bg-gray-300 p-3 my-3 rounded-md">You do not have any folders yet.</p>
                 )}
                 
             </div>
