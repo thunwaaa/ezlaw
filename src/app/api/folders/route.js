@@ -2,53 +2,142 @@ import { connectMongoDB } from "../../../../lib/mongodb";
 import Folder from "../../../../models/folder";
 import { NextResponse } from "next/server";
 
+// POST - สร้าง folder ใหม่
 export async function POST(req) {
-    const { userId,foldername, folderdesc} = await req.json();
-    console.log(foldername,folderdesc);
+    const { userId, foldername, folderdesc } = await req.json();
+    
+    // ตรวจสอบข้อมูล
+    if (!userId || !foldername) {
+        return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
+    }
+
     await connectMongoDB();
-    await Folder.create({userId,foldername,folderdesc});
-    return NextResponse.json({ message: "Folder created"}, {status: 201});    
+    await Folder.create({ userId, foldername, folderdesc });
+
+    return NextResponse.json({ message: "Folder created" }, { status: 201 });
 }
 
-export async function GET() {
-    await connectMongoDB();
-    const folders = await Folder.find({});
-    return NextResponse.json({ folders });
+// GET - ดึง folders เฉพาะของ userId
+export async function GET(req) {
+    try {
+        const userId = req.nextUrl.searchParams.get("userId");
+        
+        console.log("Received userId:", userId); // Debug log
+
+        if (!userId) {
+            console.error("No userId provided");
+            return NextResponse.json({ message: "userId is required" }, { status: 400 });
+        }
+
+        await connectMongoDB();
+        const folders = await Folder.find({ userId });
+        
+        console.log("Found folders:", folders); // Debug log
+
+        return NextResponse.json({ folders });
+    } catch (error) {
+        console.error("Server-side error:", error);
+        return NextResponse.json({ 
+            message: "Error fetching folders", 
+            error: error.message 
+        }, { status: 500 });
+    }
 }
 
+// DELETE - ลบ folder
 export async function DELETE(req) {
-    const id = req.nextUrl.searchParams.get("id"); 
+    const id = req.nextUrl.searchParams.get("id");
+
+    if (!id) {
+        return NextResponse.json({ message: "Folder ID is required" }, { status: 400 });
+    }
+
     await connectMongoDB();
     await Folder.findByIdAndDelete(id);
-    return NextResponse.json({message: "Folder deleted"}, {status:200})
+    return NextResponse.json({ message: "Folder deleted" }, { status: 200 });
 }
+
 
 
 // const express = require('express');
 // const mongoose = require('mongoose');
 // const router = express.Router();
+// const app = express();
 
-// // Folder Schema
-// const FolderSchema = new mongoose.Schema({
-//   foldername: String,
-//   folderdesc: String,
-//   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+// app.get('/api/folders', async (req, res) => {
+//     const userId = req.query.userId; // รับ userId จาก query parameters
+
+//     if (!userId) {
+//         return res.status(400).json({ error: 'userId is required' });
+//     }
+
+//     try {
+//         // ค้นหาโฟลเดอร์ทั้งหมดที่สัมพันธ์กับ userId
+//         const folders = await Folder.find({ userId });
+
+//         if (folders.length === 0) {
+//             return res.status(404).json({ error: 'No folders found for this userId' });
+//         }
+
+//         res.json(folders);
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ error: 'Server error' });
+//     }
 // });
 
-// // Flashcard Schema
-// const FlashcardSchema = new mongoose.Schema({
-//   folderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Folder' },
-//   term: String,
-//   definition: String
+// //create folder
+// app.post('/api/folders', async (req, res) => {
+//     const { foldername, folderdesc, userId } = req.body;
+
+//     // ตรวจสอบข้อมูลที่จำเป็น
+//     if (!foldername || !userId) {
+//         return res.status(400).json({ error: 'foldername and userId are required' });
+//     }
+
+//     try {
+//         // สร้างโฟลเดอร์ใหม่
+//         const newFolder = new Folder({
+//             foldername,
+//             folderdesc,
+//             userId,
+//         });
+
+//         // บันทึกลง MongoDB
+//         await newFolder.save();
+
+//         res.status(201).json({ message: 'Folder created successfully', folder: newFolder });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ error: 'Server error' });
+//     }
 // });
 
-// const Folder = mongoose.model('Folder', FolderSchema);
-// const Flashcard = mongoose.model('Flashcard', FlashcardSchema);
+// //del folder
+// app.delete('/api/folders/:folderId', async (req, res) => {
+//     const { folderId } = req.params;
 
-// // Get folder by ID
-// router.get('/folders/:id', async (req, res) => {
+//     try {
+//         // ค้นหาและลบโฟลเดอร์
+//         const deletedFolder = await Folder.findByIdAndDelete(folderId);
+
+//         if (!deletedFolder) {
+//             return res.status(404).json({ error: 'Folder not found' });
+//         }
+
+//         res.json({ message: 'Folder deleted successfully', folder: deletedFolder });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ error: 'Server error' });
+//     }
+// });
+
+
+
+// Get folder by ID
+// app.get('/folders/:id', async (req, res) => {
 //   try {
-//     const folder = await Folder.findById(req.params.id);
+//     const folder = await Folder.findById(req.params.id).populate('User');
     
 //     if (!folder) {
 //       return res.status(404).json({ message: 'Folder not found' });
@@ -60,7 +149,7 @@ export async function DELETE(req) {
 //   }
 // });
 
-// // Get all flashcards in a folder
+// Get all flashcards in a folder
 // router.get('/folders/:id/flashcards', async (req, res) => {
 //   try {
 //     const flashcards = await Flashcard.find({ folderId: req.params.id });
@@ -137,3 +226,39 @@ export async function DELETE(req) {
 // });
 
 // module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+// import { connectMongoDB } from "../../../../lib/mongodb";
+// import Folder from "../../../../models/folder";
+// import { NextResponse } from "next/server";
+
+// export async function POST(req) {
+//     const { userId,foldername, folderdesc} = await req.json();
+//     console.log(foldername,folderdesc);
+//     await connectMongoDB();
+//     await Folder.create({userId,foldername,folderdesc});
+//     return NextResponse.json({ message: "Folder created"}, {status: 201});    
+// }
+
+// export async function GET() {
+//     await connectMongoDB();
+//     const folders = await Folder.find({});
+//     return NextResponse.json({ folders });
+// }
+
+// export async function DELETE(req) {
+//     const id = req.nextUrl.searchParams.get("id"); 
+//     await connectMongoDB();
+//     await Folder.findByIdAndDelete(id);
+//     return NextResponse.json({message: "Folder deleted"}, {status:200})
+// }
