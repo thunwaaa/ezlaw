@@ -7,6 +7,11 @@ export default function Home() {
   return (
     <div>
       <Content1 />
+      <div className="grid grid-cols-1 mt-20 mx-20">
+          <Link href='/folder' className=' text-white 
+            text-4xl font-extrabold bg-blue-600 rounded-3xl p-20'>
+              <p className='text-center'>Flashcard <br /> ตัวช่วยในการเรียน</p></Link>
+      </div>
       
       
       <Foot />
