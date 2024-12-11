@@ -268,6 +268,7 @@ export const AuthButton = () => {
                         Sign in | Sign up
                     </DialogTrigger>
                 )}
+                <DialogTitle>
                 <DialogContent className="max-w-[425px] p-5">
                     <Tabs defaultValue="signin" className="w-full text-xl" onValueChange={handleTabChange}>
                         <TabsList className="grid w-full grid-cols-3 mt-4">
@@ -450,6 +451,7 @@ export const AuthButton = () => {
                         </TabsContent>
                     </Tabs>
                 </DialogContent>
+                </DialogTitle>
             </Dialog>
         </Menubar>
     );

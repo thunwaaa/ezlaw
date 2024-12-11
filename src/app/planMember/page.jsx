@@ -83,6 +83,12 @@ const Pricing = () => {
 
     const handleSubscribe = async (planIndex) => {
         if (isProcessing) return;
+    
+        if (!isLoggedIn) {
+            setShowLoginPopup(true); // Show login popup if not logged in
+            return;
+        }
+    
         setIsProcessing(true);
     
         try {
@@ -127,15 +133,6 @@ const Pricing = () => {
         checkSession();
     }, []);
     
-    // Membership view
-    if (isMembership) {
-        return (
-            <section className="text-center py-12">
-                <h2 className="text-2xl font-bold">คุณเป็นสมาชิกแล้ว</h2>
-                {/* Add membership features here */}
-            </section>
-        );
-    }
     
     const closeLoginPopup = () => {
         setShowLoginPopup(false); // ปิดป๊อปอัพ

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Content1 from "./components/Content1";
 import Foot from "./components/footer/Foot";
+import MembershipPage from "./components/protectrole";
+import ProtectedPage from "./components/protectpage";
 
 
 export default function Home() {

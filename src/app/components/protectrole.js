@@ -17,7 +17,7 @@ const MembershipPage = ({ children }) => {
                 if (response.ok) {
                     const data = await response.json();
                     
-                    if (data.role !== 'MEMBERSHIP') {
+                    if (data.role !== 'Membership') {
                         router.push('/planMember');
                     }
                 }else if(data.role !== 'Lawyer'){

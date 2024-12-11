@@ -3,6 +3,8 @@ import React,{ useState,useEffect } from "react";
 import Link from "next/link";
 import DeleteBtn from "app/components/DeleteBtn";
 import { useRouter } from "next/navigation";
+import MembershipPage from "app/components/protectrole";
+import ProtectedPage from "app/components/protectpage";
 
 export default function Folder(){
 
@@ -114,7 +116,11 @@ export default function Folder(){
     };
 
     return(
+
+            <MembershipPage>
+            <main className="container mx-auto my-3 mt-10">
         <main className="container mx-auto my-3 mt-10">
+
             <h1 className="text-4xl font-bold">All your flashcard set</h1>
             <hr className="my-3" />
             <div className="grid grid-cols-4 mt-10 gap-7">
@@ -153,5 +159,7 @@ export default function Folder(){
             </div>
 
         </main>
+    </MembershipPage>
+
     );
 }
