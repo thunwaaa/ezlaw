@@ -93,8 +93,8 @@ export default function Folder(){
 
                 {folderData && folderData.length > 0 ?(
                     folderData.map(val =>(
-                        <Link key={val._id} href={`/editfolder/${val._id}`}>
-                            <div className="shadow-xl p-10 rounded-xl">
+                        <Link  key={val._id} href={`/editfolder/${val._id}`}>
+                            <div  className="shadow-xl p-10 rounded-xl">
                                 <h4 className="text-2xl">{val.foldername}</h4>
                                 <hr className="border-1 mx-0 px-0" />
                                 <p>{val.folderdesc}</p>
