@@ -209,7 +209,7 @@ export function NavBar() {
                     /> 
                     
                     <Link 
-                        href={isLoggedIn && userRole === 'Membership' ? '/consult' : '/planMember'} 
+                        href={isLoggedIn && userRole === 'Membership' || userRole === 'Lawyer' ? '/consult' : '/planMember'} 
                         className=" border border-slate-950 rounded-full px-3 py-1 font-semibold hover:text-slate-500 hover:border-slate-500 transition duration-300 mr-3">
                             ปรึกษาทนาย
                     </Link>

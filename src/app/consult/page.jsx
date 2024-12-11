@@ -5,28 +5,12 @@ import SelectLawyer from 'app/components/selectlawyer/page'
 
 function ConsultLawyer() {
   return (
+    
     <div className='bg-blue-200 p-10 h-screen'>
-      <div className='rounded-t-2xl mt-10 w-11/12 h-auto  bg-white pb-10 p-20 mx-10 flex justify-between text-left items-center'>
+      <div className='rounded-t-2xl mt-10 w-11/12 h-auto  bg-white pb-10 p-20 mx-10 pb-0 flex justify-between text-left items-center'>
           <h1 className='font-extrabold text-5xl' >Lawyer</h1>
-          <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger><li className='text-xl'><Link href = '/consult'>ทั้งหมด</Link></li></NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className='flex-col w-48 text-left pl-4 pt-4 mb-5 text-xl'>
-                  <li><Link href = '/consult/crimelawyer'>อาญา</Link></li>
-                  <li><Link href = '/consult/civillawyer'>แพ่งและพาณิชย์</Link></li>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            
-          </NavigationMenuList>
-          </NavigationMenu>
       </div>
-
-
-      <div className='rounded-b-2xl w-11/12 h-auto  bg-white px-20 py-10 mx-10 text-left'>
-          <SelectLawyer />
+      <div className='rounded-b-2xl w-11/12 h-auto  bg-white px-20 pt-0 py-10 mx-10 text-left'>
           <SelectLawyer />
       </div>
 
