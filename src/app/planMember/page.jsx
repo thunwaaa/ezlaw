@@ -84,36 +84,32 @@ const Pricing = () => {
     const handleSubscribe = async (planIndex) => {
         if (isProcessing) return;
         setIsProcessing(true);
-
+    
         try {
-            if (isLoggedIn) {
-                const selectedPlan = plans[planIndex];
-                if (!selectedPlan.link) {
-                    console.error('Link is empty for planIndex:', planIndex);
-                    return;
-                }
-
-                const response = await fetch("/api/create-checkout-session", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ priceId: selectedPlan.priceId, userEmail }),
-                });
-
-                const session = await response.json();
-
-                if (session.error) {
-                    console.error(session.error);
-                    return;
-                }
-
-                const stripe = await stripePromise;
-                const result = await stripe.redirectToCheckout({ sessionId: session.id });
-
-                if (result.error) {
-                    console.error(result.error.message);
-                }
-            } else {
-                setShowLoginPopup(true);
+            const selectedPlan = plans[planIndex];
+            if (!selectedPlan.link) {
+                console.error('Link is empty for planIndex:', planIndex);
+                return;
+            }
+    
+            const response = await fetch("/api/create-checkout-session", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ priceId: selectedPlan.priceId, userEmail }),
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Failed to create checkout session:', errorData.error);
+                return;
+            }
+    
+            const session = await response.json();
+            const stripe = await stripePromise;
+            const result = await stripe.redirectToCheckout({ sessionId: session.id });
+    
+            if (result.error) {
+                console.error(result.error.message);
             }
         } catch (error) {
             console.error("Unexpected error:", error);
@@ -121,6 +117,11 @@ const Pricing = () => {
             setIsProcessing(false);
         }
     };
+
+    const handleSubscriptionError = (error) => {
+        console.error('Subscription error:', error);
+        alert('Subscription failed. Please try again.');
+    };    
 
     useEffect(() => {
         checkSession();

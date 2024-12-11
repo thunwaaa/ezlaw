@@ -313,7 +313,7 @@ export const AuthButton = () => {
                                 <div className="space-y-2">
                                 <Label htmlFor="firstName">First Name</Label>
                                 <Input
-                                    onChange={(e) => setfirstname(e.target.value)}
+                                    onChange={(e) => setFirstname(e.target.value)}
                                     id="firstname"
                                     name="firstname"
                                     type="text"
@@ -325,7 +325,7 @@ export const AuthButton = () => {
                             <div className="space-y-2">
                                 <Label htmlFor="lastName">Last Name</Label>
                                 <Input
-                                    onChange={(e) => setlastname(e.target.value)}
+                                    onChange={(e) => setLastname(e.target.value)}
                                     id="lastname"
                                     name="lastname"
                                     type="text"
@@ -337,7 +337,7 @@ export const AuthButton = () => {
                             <div className="space-y-2">
                                 <Label htmlFor="signup-email">Email</Label>
                                 <Input
-                                    onChange={(e) => setemail(e.target.value)}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     id="email"
                                     name = "email"
                                     type = "email"
@@ -349,7 +349,7 @@ export const AuthButton = () => {
                             <div>
                                 <Label htmlFor="signup-password">Password</Label>
                                 <Input
-                                    onChange={(e) => setpassword(e.target.value)}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     id = "password"
                                     name = "password"
                                     type = "password"
@@ -361,7 +361,7 @@ export const AuthButton = () => {
                             <div>
                                 <Label htmlFor="confirm-password">Confirm Password</Label>
                                 <Input
-                                    onChange={(e) =>setconfirmpassword(e.target.value)}
+                                    onChange={(e) =>setConfirmpassword(e.target.value)}
                                     id = "confirm-password"
                                     name = "comfirm-password"
                                     type = "password"
