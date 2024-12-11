@@ -102,4 +102,6 @@ const ProtectedPage = ({ children }) => {
     );
 };
 
+
 export default ProtectedPage;
+
