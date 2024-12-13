@@ -116,49 +116,47 @@ export default function Folder(){
     };
 
     return(
-
-            <MembershipPage>
+        <MembershipPage>
             <main className="container mx-auto my-3 mt-10">
-        <main className="container mx-auto my-3 mt-10">
 
-            <h1 className="text-4xl font-bold">All your flashcard set</h1>
-            <hr className="my-3" />
-            <div className="grid grid-cols-4 mt-10 gap-7">
+                <h1 className="text-4xl font-bold">All your flashcard set</h1>
+                <hr className="my-3" />
+                <div className="grid grid-cols-4 mt-10 gap-7">
 
-                <button onClick={() => setIsCreating(true)} className=" bg-green-500 p-3 text-2xl text-white rounded-2xl">Create new set</button>
-                {isCreating &&(
-                    <form  onSubmit={handleSubmit} className="shadow-xl p-5 rounded-xl border border-gray-300">
-                        <h4 className="text-xl">New Flashcard Set</h4>
-                        <input onChange={(e) => setFoldername(e.target.value)} type="text" placeholder="Set name" value={foldername} className="block w-full mt-3 p-2 border rounded-md" />
-                        <input onChange={(e) => setFolderdesc(e.target.value)} placeholder="Set Description" value={folderdesc} className="block w-full mt-3 p-2 border rounded-md"></input>
-                        <div className="flex justify-between mt-5">
-                            <button onClick={handleCancel} className="bg-red-500 text-white py-2 px-4 rounded-md">Cancel</button>
-                            <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-md">Create</button>
-                        </div>
-                        
-                    </form>
-                )}
+                    <button onClick={() => setIsCreating(true)} className=" bg-green-500 p-3 text-2xl text-white rounded-2xl">Create new set</button>
+                    {isCreating &&(
+                        <form  onSubmit={handleSubmit} className="shadow-xl p-5 rounded-xl border border-gray-300">
+                            <h4 className="text-xl">New Flashcard Set</h4>
+                            <input onChange={(e) => setFoldername(e.target.value)} type="text" placeholder="Set name" value={foldername} className="block w-full mt-3 p-2 border rounded-md" />
+                            <input onChange={(e) => setFolderdesc(e.target.value)} placeholder="Set Description" value={folderdesc} className="block w-full mt-3 p-2 border rounded-md"></input>
+                            <div className="flex justify-between mt-5">
+                                <button onClick={handleCancel} className="bg-red-500 text-white py-2 px-4 rounded-md">Cancel</button>
+                                <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-md">Create</button>
+                            </div>
+                            
+                        </form>
+                    )}
 
-                {folderData && folderData.length > 0 ?(
-                    folderData.map((folder) =>(
-                            <Link href={`/editfolder/${folder._id}`} key={folder._id}>
-                                <div className="shadow-xl p-10 rounded-xl">
-                                    <h4 className="text-2xl font-bold">{folder.foldername}</h4>
-                                    <hr className="border-1 mx-0 px-0" />
-                                    <p>{folder.folderdesc}</p>
-                                    <div className="mt-5">
-                                        <DeleteBtn id={folder._id} />
+                    {folderData && folderData.length > 0 ?(
+                        folderData.map((folder) =>(
+                                <Link href={`/editfolder/${folder._id}`} key={folder._id}>
+                                    <div className="shadow-xl p-10 rounded-xl">
+                                        <h4 className="text-2xl font-bold">{folder.foldername}</h4>
+                                        <hr className="border-1 mx-0 px-0" />
+                                        <p>{folder.folderdesc}</p>
+                                        <div className="mt-5">
+                                            <DeleteBtn id={folder._id} />
+                                        </div>
                                     </div>
-                                </div>
-                            </Link>
-                    ))
-                ) : (
-                    <p className="bg-gray-300 p-3 my-3 rounded-md">You do not have any folders yet.</p>
-                )}
-                
-            </div>
+                                </Link>
+                        ))
+                    ) : (
+                        <p className="bg-gray-300 p-3 my-3 rounded-md">You do not have any folders yet.</p>
+                    )}
+                    
+                </div>
 
-        </main>
+                </main>
     </MembershipPage>
 
     );
