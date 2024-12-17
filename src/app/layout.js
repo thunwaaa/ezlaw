@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import { Playfair_Display, Noto_Sans_Thai } from 'next/font/google'
 import "./globals.css";
 import NavBar from "./components/navbar/NavBar";
+import { Toaster } from "react-hot-toast";
 
 
 const playfair_display = Playfair_Display({
@@ -35,13 +36,14 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         className={`${noto_sans_thai.className} antialiased`}
-      >
+        >
         <header>
           <NavBar />
         </header>
         <main>
             {children}
           </main>
+          <Toaster />
       </body>
     </html>
   );

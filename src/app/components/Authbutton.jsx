@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from 'lucide-react';
+import toast from "react-hot-toast";
 
 export const AuthButton = () => {
     const [firstname, setFirstname] = useState("");
@@ -32,8 +33,9 @@ export const AuthButton = () => {
     const [currentTab, setCurrentTab] = useState("signin");
     const [lawyerEmail, setLawyerEmail] = useState("");
     const [lawyerPassword, setLawyerPassword] = useState("");
-    const [lawyerRole, setlawyerRole] = useState(null);
+    const [Role, setRole] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
+    const [userProfile, setUserProfile] = useState(null);
 
 
     const router = useRouter();
@@ -98,8 +100,13 @@ export const AuthButton = () => {
             if (res.ok) {
                 console.log("Logout success");
                 setIsLoggedIn(false);
-                router.push("/")
-                window.location.reload();
+                toast.success("Logout sucessfully!",{
+                    duration:2000,
+                });
+                setTimeout(() => {
+                    window.location.reload(); 
+                }, 1000);
+                router.push("/");
             } else {
                 console.error("Logout error");
             }
@@ -131,11 +138,16 @@ export const AuthButton = () => {
             if (response.ok) {
                 const data = await response.json();
                 localStorage.setItem("token", data.token);
+                toast.success("Login successfully!",{
+                    duration:2000,
+                });
+                setTimeout(() => {
+                    window.location.reload(); 
+                }, 1000);
                 console.log("User login success");
                 setErrorMessage("");
                 setIsDialogOpen(false);
                 checkSession();
-                window.location.reload();
             } else {
                 setErrorMessage("Login failed. Please check your email or password.");
             }
@@ -166,7 +178,12 @@ export const AuthButton = () => {
                 setErrorMessage("");
                 setIsDialogOpen(false);
                 checkSession();
-                window.location.reload();
+                toast.success("Login successfully!",{
+                    duration:2000,
+                });
+                setTimeout(() => {
+                    window.location.reload(); 
+                }, 1000);
             } else {
                 setErrorMessage("Lawyer login failed. Please check your credentials.");
             }
@@ -204,6 +221,12 @@ export const AuthButton = () => {
                 console.log("User register success");
                 setErrorMessage("");
                 setIsDialogOpen(false);
+                toast.success("SignUp successfully!",{
+                    duration:2000,
+                });
+                setTimeout(() => {
+                    window.location.reload(); 
+                }, 1000);
             }
         } catch (error) {
             console.error("Error: ", error);
@@ -212,22 +235,22 @@ export const AuthButton = () => {
 
     const fetchUserRole = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/lawyerauth/lawyer-role", {
+            const response = await fetch("http://localhost:8080/api/auth/user_role", {
                 method: "GET",
                 credentials: "include",
             });
             if (response.ok) {
                 const data = await response.json();
                 console.log("lawyer role fetched successfully:", data);
-                setlawyerRole(data.role);
+                setRole(data.role);
             } else {
                 const errorData = await response.json();
                 console.error("Error fetching lawyer role:", errorData);
-                setlawyerRole(null);
+                setRole(null);
             }
         } catch (error) {
             console.error("Network or server error:", error);
-            setlawyerRole(null);     
+            setRole(null);     
         }
     };
 
@@ -235,20 +258,64 @@ export const AuthButton = () => {
         fetchUserRole();
     }, []);
 
-
+    const fetchUserProfile = async () => {
+        try {
+            if (Role === 'Lawyer') {
+                const res = await fetch("http://localhost:8080/api/lawyerauth/profile", {
+                    method: "GET",
+                    credentials: "include",
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setUserProfile(data);
+                } else {
+                    console.error("Failed to fetch lawyer profile.");
+                }
+            }else if(Role === "user" || Role === "Membership") {
+                const res = await fetch("http://localhost:8080/api/auth/profile", {
+                    method: "GET",
+                    credentials: "include",
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setUserProfile(data);
+                } else {
+                    console.error("Failed to fetch user profile.");
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching profile: ", error);
+        }
+    };
+    
+    useEffect(() => {
+            fetchUserProfile();
+    },[Role]);
     return (
         <Menubar className="library-class">
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 {isLoggedIn ? (
                     <MenubarMenu>
-                        <MenubarTrigger className="py-1 w-24 text-lg font-semibold border border-slate-950 hover:text-slate-500 hover:border-slate-500 hover:bg-none transition duration-300 justify-center rounded-full">
-                            Profile
+                        <MenubarTrigger>
+                            {userProfile?.profileImageUrl ? (
+                                    <img
+                                        src={userProfile.profileImageUrl}
+                                        alt="Profile"
+                                        className="w-10 h-10 rounded-full object-cover"
+                                    />
+                                ) : (
+                                    <img
+                                        src="/profilePic.jpg"
+                                        alt="Default Profile"
+                                        className="w-10 h-10 rounded-full object-cover"
+                                    />
+                            )}
                         </MenubarTrigger>
                         <MenubarContent>
                             <ul className="w-[200px] text-base p-4">
                                 <MenubarItem>
                                     <li className="mb-1">
-                                        <Link href={lawyerRole === 'Lawyer' ? '/lawyereditprofile' : '/editprofile'} className="hover:text-slate-500 transition duration-300 flex justify-center">
+                                        <Link href={Role === 'Lawyer' ? '/lawyereditprofile' : '/editprofile'} className="hover:text-slate-500 transition duration-300 flex justify-center">
                                             Edit Profile
                                         </Link>
                                     </li>
