@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 function CrimeSec() {
   return (
-    <Link href='/crime/crime1' 
+    <Link href='/laws/1' 
     className='flex justify-center items-center
     text-white text-4xl font-extrabold bg-red-700 w-5/12 rounded-3xl'>
         <Image

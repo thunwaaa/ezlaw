@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link';
 
 function EditProfile() {
     const [isEditing, setIsEditing] = useState(false);
@@ -177,6 +178,9 @@ function EditProfile() {
                         <p>
                             {profile.email}
                         </p>
+                    </div>
+                    <div>
+                        <button className='border p-4 rounded-xl w-72 hover:bg-slate-300 transition duration-300'><Link href="https://billing.stripe.com/p/login/test_00gdTj1znbAtaTSdQQ">Billing portal</Link></button>
                     </div>
                 </div>
             </div>

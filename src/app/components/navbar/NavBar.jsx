@@ -31,11 +31,11 @@ const playfair_display = Playfair_Display({
 const laws = [
     {
       title: "กฏหมายอาญา",
-      href: "/crime/crime1"
+      href: "/laws/1"
     },
         {
       title: "กฏหมายแพ่งและพาณิชย์",
-      href: "/civil"
+      href: "/laws/2"
     }
 ];
 
@@ -200,19 +200,10 @@ export function NavBar() {
                     </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                    <Image
-                        src="/crownIcon.png"
-                        width={30}
-                        height={30}
-                        alt = 'Icon'
-                        className="absolute -top-4 right-48"                   
-                    /> 
-                    
-                    <Link 
-                        href={isLoggedIn && userRole === 'Membership' || userRole === 'Lawyer' ? '/consult' : '/planMember'} 
-                        className=" border border-slate-950 rounded-full px-3 py-1 font-semibold hover:text-slate-500 hover:border-slate-500 transition duration-300 mr-3">
-                            ปรึกษาทนาย
-                    </Link>
+                <Link href={isLoggedIn && userRole === 'Membership' || userRole === 'Lawyer' ? '/consult' : '/planMember'} className="flex items-center relative border border-slate-950 rounded-full px-3 py-1 font-semibold hover:text-slate-500 hover:border-slate-500 transition duration-300 mr-3">
+                    <Image src="/crownIcon.png" width={30} height={30} alt="Icon" className="absolute -top-4 right-3" />
+                    ปรึกษาทนาย
+                </Link>
                     
                 </NavigationMenuItem> 
                 <AuthButton />

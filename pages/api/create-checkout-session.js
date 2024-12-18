@@ -25,7 +25,7 @@ export default async function handler(req, res) {
                     },
                 ],
                 mode: 'subscription',
-                success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/consult?session_id={CHECKOUT_SESSION_ID}`, // Use a query param to include the session ID for easy reference
+                success_url: `${process.env.NEXT_PUBLIC_SITE_URL}?session_id={CHECKOUT_SESSION_ID}`, // Use a query param to include the session ID for easy reference
                 cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}`,
                 customer_email: userEmail,
                 subscription_data: {

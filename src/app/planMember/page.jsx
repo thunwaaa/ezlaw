@@ -3,7 +3,6 @@
 import { useEffect, useState} from 'react';
 import { Check } from 'lucide-react'
 import styles from './Pricing.module.css'; // import CSS module
-import SubscriptionButton from 'app/components/SubscriptionButton';
 import { loadStripe } from '@stripe/stripe-js';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
