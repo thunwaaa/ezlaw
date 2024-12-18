@@ -47,16 +47,20 @@ export async function GET(request,{ params }) {
 }
 
 
-export async function PUT(req,res) {
+export async function PUT(req,{params}) {
     try{
-        const{flashcardId,term,definition} = req.body;
+        await connectMongoDB();
+
+        const{flashcardId,term,definition} = await req.json();
+
         if(!flashcardId){
-            return res.status(400).json({error:"Flashcard ID is required"});
+            return res.status(400).json({error:"Flashcard ID is required"},{status: 400});
         }
+
         const flashcard = await Flashcard.findById(flashcardId);
 
         if(!flashcard){
-            return res.status(404).json({error:"Flashcard not found"});
+            return res.status(404).json({error:"Flashcard not found"},{status: 404});
         }
 
         if(term != undefined) flashcard.term = term;
@@ -64,13 +68,16 @@ export async function PUT(req,res) {
 
         await flashcard.save();
 
-        req.status(200).json({
+        return NextResponse.json({
             message: "Flashcard updated successfully",
-            flashcard,
-        });
+            flashcard
+        },{status: 200});
     }catch(error){
         console.error("Error updating flashcard : ",error);
-        res.status(500).json({error:"Internal sever error"});
+        return NextResponse.json({
+            message: "Failed to update flashcard",
+            error: error.message
+        },{status:500});
     }
     
 }

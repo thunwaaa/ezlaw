@@ -3,9 +3,11 @@ import Folder from "../../../../../models/folder";
 import { NextRequest, NextResponse } from "next/server";
 import Flashcard from "../../../../../models/flashcard";
 import mongoose from "mongoose";
+import React,{use} from "react";
 
 
 export async function GET(req, { params }) {
+    await connectMongoDB();
     const { id } = params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return new Response("Invalid ID", { status: 400 });
@@ -24,49 +26,75 @@ export async function GET(req, { params }) {
     }
 }
 
-// export async function PUT(req, { params }) {
-//     const { id } = params;
-//     const { folderId: folderId, newImg: img, newContent: content } = await req.json();
-//     await connectMongoDB();
-//     await Post.findByIdAndUpdate(id, { title, img, content });
-//     return NextResponse.json({ message: "Post updated" }, { status: 200 });
-// }
+export async function PUT(request,{params}) {
+    await connectMongoDB();
+    
+    const { id } = params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return NextResponse.json(
+            { message: "Invalid ID" }, 
+            { status: 400 }
+        );
+    }
 
-// export async function POST(req) {
-//     const {folderId, term,definition} = await req.json();
+    try {
+        const data = await request.json();
+        const { foldername, folderdesc } = data;
 
-//     if (!folderId || !term) {
-//         return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
-//     }
+        if (!foldername) {
+            return NextResponse.json(
+                { message: "Folder name is required" }, 
+                { status: 400 }
+            );
+        }
 
-//     await connectMongoDB();
-//     await Folder.create({ folderId, term, definition });
+        const updatedFolder = await Folder.findByIdAndUpdate(
+            id,
+            { foldername, folderdesc },
+            { new: true } // returns the updated document
+        );
 
-//     return NextResponse.json({ message: "Flashcard created" }, { status: 201 });
-// }
+        if (!updatedFolder) {
+            return NextResponse.json(
+                { message: "Folder not found" }, 
+                { status: 404 }
+            );
+        }
 
-// export async function GET(req) {
-//     try {
-//         const folderId = req.nextUrl.searchParams.get("FolderId");
+        return NextResponse.json(updatedFolder, { status: 200 });
+    } catch (error) {
+        console.error("Error updating folder:", error);
+        return NextResponse.json(
+            { message: "Error updating folder" }, 
+            { status: 500 }
+        );
+    }
+}
+
+export async function DELETE(request, { params }) {
+    try {
+        const { id } = params;
         
-//         console.log("Received folderId:", folderId); // Debug log
-
-//         if (!folderId) {
-//             console.error("No folderId provided");
-//             return NextResponse.json({ message: "folderId is required" }, { status: 400 });
-//         }
-
-//         await connectMongoDB();
-//         const flashcards = await Flashcard.find({ folderId });
+        await connectMongoDB();
         
-//         console.log("Found flashcards:", flashcards); // Debug log
+        const folder = await Folder.findByIdAndDelete(id);
+        
+        if (!folder) {
+            return NextResponse.json(
+                { message: "Folder not found" }, 
+                { status: 404 }
+            );
+        }
 
-//         return NextResponse.json({ flashcards });
-//     } catch (error) {
-//         console.error("Server-side error:", error);
-//         return NextResponse.json({ 
-//             message: "Error fetching flashcards", 
-//             error: error.message 
-//         }, { status: 500 });
-//     }
-// }
+        return NextResponse.json(
+            { message: "Folder deleted successfully" }, 
+            { status: 200 }
+        );
+
+    } catch (error) {
+        return NextResponse.json(
+            { message: "Error deleting folder" }, 
+            { status: 500 }
+        );
+    }
+}

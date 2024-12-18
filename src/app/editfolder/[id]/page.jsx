@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { validators } from 'tailwind-merge';
 import { fromJSON } from 'postcss';
 import DeleteBtn from 'app/components/DeleteBtn';
+import { MdEditSquare } from "react-icons/md";
 
 const EditFolderPage = ({ params }) => {
 
@@ -21,9 +22,6 @@ const EditFolderPage = ({ params }) => {
     const [isPlaying,setIsPlaying] = useState(false);
     const [isFlipped,setIsFlipped] = useState(false);
 
-    //new data folder
-    const [newfoldername, setnewfoldername] = useState("");
-    const [newfolderdesc, setnewfolderdesc] = useState("");
 
     const [editMode,setEditMode] = useState(null);
     const [editTerm,setEditTerm] = useState("");
@@ -55,6 +53,49 @@ const EditFolderPage = ({ params }) => {
             setFlashcardData([]);
         }
     };
+
+    // const handleEditFolder = () => {
+    //     // เริ่มโหมดแก้ไขโฟลเดอร์
+    //     setIsEditingFolder(true);
+    //     setEditFolderName(folderData.foldername);
+    //     setEditFolderDesc(folderData.folderdesc);
+    // };
+    
+    // const handleSaveFolderEdit = async () => {
+    //     try {
+    //         const res = await fetch(`http://localhost:3000/api/folders/${id}`, {
+    //             method: "PUT",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //             },
+    //             body: JSON.stringify({
+    //                 foldername: editFolderName,
+    //                 folderdesc: editFolderDesc
+    //             }),
+    //         });
+    
+    //         if (!res.ok) {
+    //             throw new Error("Failed to update folder");
+    //         }
+    
+    //         const data = await res.json();
+            
+    //         // อัปเดต state ของโฟลเดอร์
+    //         setFolderData(data.folder);
+    
+    //         // ออกจากโหมดแก้ไข
+    //         setIsEditingFolder(false);
+    //     } catch (error) {
+    //         console.log("Error updating folder: ", error);
+    //         alert("Failed to update folder");
+    //     }
+    // };
+    
+    // const handleCancelFolderEdit = () => {
+    //     setIsEditingFolder(false);
+    //     setEditFolderName("");
+    //     setEditFolderDesc("");
+    // };
     
     const handleEdit = (flashcard) =>{
         setEditMode(flashcard._id);
@@ -62,34 +103,47 @@ const EditFolderPage = ({ params }) => {
         setEditDefinition(flashcard.definition);
     };
 
-    const handleCancelEdit = () =>{
-        setEditMode(null);
-        setEditTerm("");
-        setEditDefinition("");
-    };
-
-    const handleSaveEdit = async (flashcardId) =>{
-        try{
-            const res = await fetch(`http://3000/api/folders/${id}/flashcards`,{
+    const handleSaveEdit = async (flashcardId) => {
+        try {
+            const res = await fetch(`http://localhost:3000/api/folders/${id}/flashcards`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({flashcardId, term: editTerm, definition: editDefinition}),
+                body: JSON.stringify({
+                    flashcardId, 
+                    term: editTerm, 
+                    definition: editDefinition
+                }),
             });
-
-            if(!res.ok){
+    
+            if (!res.ok) {
                 throw new Error("Failed to update flashcard");
             }
-
-            const updatedFlashcard = await res.json();
-
-            setFlashcardData((prev) => prev.map((card) => card._id === flashcardId ? {...card, term: updatedFlashcard.term, definition: updatedFlashcard.definition} : card));
-
+    
+            const data = await res.json();
+    
+            // อัปเดต state ของ flashcards
+            setFlashcardData((prev) => 
+                prev.map((card) => 
+                    card._id === flashcardId 
+                        ? data.flashcard
+                        : card
+                )
+            );
+    
+            // ออกจากโหมดแก้ไข
             handleCancelEdit();
-        }catch(error){
-            console.log("Error updating flashcard: ",error);
+        } catch (error) {
+            console.log("Error updating flashcard: ", error);
+            alert("Failed to update flashcard");
         }
+    };
+    
+    const handleCancelEdit = () => {
+        setEditMode(null);
+        setEditTerm("");
+        setEditDefinition("");
     };
 
     async function getFolderById(id) {
@@ -208,59 +262,55 @@ const EditFolderPage = ({ params }) => {
     };
 
   return (
-    <div className='container mx-10 py-10 '>
-        <div className='grid grid-cols-2'>
-            <div>
-                <h3 className='text-4xl font-bold'>{folderData.foldername}</h3>
-                <h2 className='text-xl font-bold'>{folderData.folderdesc}</h2>
-            </div>
-        </div>
+    <div className='container ml-40 py-10 h-screen w-screen'>
         
-            
+            <div className='flex justify-between'>
+                <div>
+                    <h3 className='text-4xl font-bold'>{folderData.foldername}</h3>
+                    <h2 className='text-xl font-bold'>{folderData.folderdesc}</h2>
+                </div>
+                
+            </div>
         <hr className='my-3'/>
         <div className='grid grid-cols-2 gap-5 mx-5'>
             
         </div>
 
         {isPlaying && flashcardData.length > 0 && (
-                <div onClick={handleFlip} className="mt-10 bg-blue-950 p-10 rounded-xl text-white">
-                    {isFlipped ? (
-                        <>
-                            <h4 className="text-xl font-bold">Term:</h4>
-                            <p className="text-lg">{flashcardData[currentFlashcardIndex].term}</p>
-                            
-                        </>
-                    ) : (
-                        <>
-                            <h4 className="text-xl font-bold mt-5">Definition:</h4>
-                            <p className="text-lg">{flashcardData[currentFlashcardIndex].definition}</p>
-                        </>
-                    )}
-                    
-                    
-
-                    <button className="flex justify-end mt-5">
-                            <button
-                            className="bg-yellow-600 py-2 px-3 rounded-lg mr-5">
-                            Flip
-                        </button>
-                        {currentFlashcardIndex < flashcardData.length - 1 ? (
-                            <button
-                                onClick={handleNextFlashcard}
-                                className="bg-green-600 py-2 px-3 rounded-lg mr-5"
-                            >
-                                Next
-                            </button>
-                        ) : (
-                            <button
-                                onClick={handleFinish}
-                                className="bg-gray-600 py-2 px-3 rounded-lg"
-                            >
-                                Finish
-                            </button>
-                        )}
-                    </button>
+            <div onClick={handleFlip} className="flex flex-col items-center justify-center h-2/4 mt-10 bg-blue-950 p-10 rounded-xl text-white">
+                <div className="text-center">
+                {isFlipped ? (
+                    <>
+                    <p className="text-3xl font-bold">{flashcardData[currentFlashcardIndex].term}</p>
+                    </>
+                ) : (
+                    <>
+                    <p className="text-3xl font-bold">{flashcardData[currentFlashcardIndex].definition}</p>
+                    </>
+                )}
                 </div>
+
+                <div className="flex justify-center w-full pt-52">
+                <button className="bg-yellow-600 py-2 px-3 rounded-lg mr-5">
+                    Flip
+                </button>
+                {currentFlashcardIndex < flashcardData.length - 1 ? (
+                    <button
+                    onClick={handleNextFlashcard}
+                    className="bg-green-600 py-2 px-3 rounded-lg mr-5"
+                    >
+                    Next
+                    </button>
+                ) : (
+                    <button
+                    onClick={handleFinish}
+                    className="bg-gray-600 py-2 px-3 rounded-lg"
+                    >
+                    Finish
+                    </button>
+                )}
+                </div>
+            </div>
             )}
 
             {!isPlaying && (
@@ -291,11 +341,11 @@ const EditFolderPage = ({ params }) => {
                                     <div>
                                         <div className='flex items-center'>
                                             <label htmlFor="" className='mx-5 font-bold'>TERM :</label>
-                                            <input type="text" onChange={(e) => setflashcardterm(e.target.value)} value={flashcardterm} placeholder='term' className='bg-transparent' />
+                                            <input type="text" onChange={(e) => setflashcardterm(e.target.value)} value={flashcardterm} placeholder='term' className='bg-transparent border-none outline-none' />
                                         </div>
                                         <div className='flex items-center mt-2'>
                                             <label htmlFor="" className='mx-5 font-bold'>DEFINITION : </label>
-                                            <input type="text" onChange={(e) => setflashcarddef(e.target.value)} value={flashcarddef} placeholder='definition' className='bg-transparent' />
+                                            <input type="text" onChange={(e) => setflashcarddef(e.target.value)} value={flashcarddef} placeholder='definition' className='bg-transparent border-none outline-none' />
                                         </div>
                                         
                                     </div>
@@ -322,49 +372,81 @@ const EditFolderPage = ({ params }) => {
                                         <div className='flex justify-between items-start'>
                                             <div>
                                                 {editMode === flashcard._id ? (
-                                                    <>
-                                                        <div className='flex items-center'>
+                                                    <div className='grid grid-cols-2 gap-x-96'>
+                                                        <div>
+                                                            <div className='flex items-center'>
                                                             <label htmlFor="" className='mx-5 font-bold'>TERM : </label>
-                                                            <input type="text" value={editTerm} onChange={(e) => setEditTerm(e.target.value)} className='bg-transparent text-white' />
+                                                            <input 
+                                                                type="text" 
+                                                                value={editTerm}
+                                                                onChange={(e) => setEditTerm(e.target.value)}
+                                                                className='bg-transparent text-white border-b border-none outline-none'
+                                                            />
+                                                            </div>
+                                                            <div className='flex items-center mt-2'>
+                                                                <label htmlFor="" className='mx-5 font-bold'>DEFINITION : </label>
+                                                                <input 
+                                                                    type="text" 
+                                                                    value={editDefinition}
+                                                                    onChange={(e) => setEditDefinition(e.target.value)}
+                                                                    className='bg-transparent text-white border-b border-none outline-none'
+                                                                />
+                                                            
+                                                            </div>
                                                         </div>
-                                                        <div className='flex items-center mt-2'>
-                                                            <label htmlFor="" className='mx-5 font-bold'>DEFINITION : </label>
-                                                            <input type="text" value={editDefinition} onChange={(e) => setEditDefinition(e.target.value)} className='bg-transparent text-white' />
+                                                        
+                                                        <div className='flex mt-4 ml-96'>
+                                                            <button 
+                                                                onClick={() => handleSaveEdit(flashcard._id)} 
+                                                                className='bg-green-500 py-2 px-3 rounded-lg mr-2'
+                                                            >
+                                                                Save
+                                                            </button>
+                                                            <button 
+                                                                onClick={handleCancelEdit} 
+                                                                className='bg-gray-500 py-2 px-3 rounded-lg'
+                                                            >
+                                                                Cancel
+                                                            </button>
                                                         </div>
-                                                    </>
+                                                    </div>
                                                 ) : (
-                                                    <>
-                                                        <div className='flex items-center'>
-                                                            <label htmlFor="" className='mx-5 font-bold'>TERM : </label>
-                                                            <h4 className='text-gray-400'>{flashcard.term}</h4>
+                                                    <div className='grid grid-cols-2 gap-x-96'>
+                                                        <div>
+                                                            <div className='flex items-center'>
+                                                                <label htmlFor="" className='mx-5 font-bold'>TERM : </label>
+                                                                <h4 className='text-gray-400'>{flashcard.term}</h4>
+                                                            </div>
+                                                            <div className='flex items-center mt-2'>
+                                                                <label htmlFor="" className='mx-5 font-bold'>DEFINITION : </label>
+                                                                <h4 className='text-gray-400'>{flashcard.definition}</h4>
+                                                            </div>
                                                         </div>
-                                                        <div className='flex items-center mt-2'>
-                                                            <label htmlFor="" className='mx-5 font-bold'>DEFINITION : </label>
-                                                            <h4 className='text-gray-400'>{flashcard.definition}</h4>
+                                                        
+                                                        <div className="flex mt-4 ml-96">
+                                                        {/* {editMode === flashcard._id ? (
+                                                            <> */}
+                                                            {/* <button onClick={() => handleSaveEdit(flashcard._id)} className="bg-green-600 py-2 px-3 ml-5 rounded-lg">
+                                                                Save
+                                                            </button>
+                                                            <button onClick={handleCancelEdit} className="bg-gray-600 py-2 px-3 ml-5 rounded-lg">
+                                                                Cancel
+                                                            </button> */}
+                                                            {/* </>
+                                                        ) : (
+                                                            // <button onClick={() => handleEdit(flashcard)} className="bg-blue-600 py-2 px-3 ml-5 rounded-lg">
+                                                            //   Edit
+                                                            // </button>
+                                                        )} */}
+                                                        <button onClick={() => handleEdit(flashcard)} className='bg-slate-500 py-2 px-3 rounded-lg'>Edit</button>
+                                                        <button onClick={() => handleDelete(id, flashcard._id)} className="bg-red-600 py-2 px-3 ml-5 rounded-lg">
+                                                            Delete
+                                                        </button>
                                                         </div>
-                                                    </>
+                                                    </div>
+                                                    
                                                 )}
                                                 </div>
-        
-                                                <div className="flex mt-4 justify-end">
-                          {/* {editMode === flashcard._id ? (
-                            <> */}
-                              {/* <button onClick={() => handleSaveEdit(flashcard._id)} className="bg-green-600 py-2 px-3 ml-5 rounded-lg">
-                                Save
-                              </button>
-                              <button onClick={handleCancelEdit} className="bg-gray-600 py-2 px-3 ml-5 rounded-lg">
-                                Cancel
-                              </button> */}
-                            {/* </>
-                          ) : (
-                            // <button onClick={() => handleEdit(flashcard)} className="bg-blue-600 py-2 px-3 ml-5 rounded-lg">
-                            //   Edit
-                            // </button>
-                          )} */}
-                          <button onClick={() => handleDelete(id, flashcard._id)} className="bg-red-600 py-2 px-3 ml-5 rounded-lg">
-                            Delete
-                          </button>
-                        </div>
                       </div>
                     </div>
                   ))
