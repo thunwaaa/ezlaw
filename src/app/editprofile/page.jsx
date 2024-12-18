@@ -1,8 +1,9 @@
 'use client'
-
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link';
+import { Pencil } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 function EditProfile() {
     const [isEditing, setIsEditing] = useState(false);
@@ -12,7 +13,12 @@ function EditProfile() {
         gender: "",
         email: "",
         phone: "",
-    })
+        profileImageUrl: "",
+    });
+
+    const [profileImage, setProfileImage] = useState(null); 
+    const [imagePreview, setImagePreview] = useState('/profilePic.jpg');
+    const [imageInputRef, setImageInputRef] = useState(null);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -28,6 +34,9 @@ function EditProfile() {
 
                 const data = await res.json();
                 setProfile(data);
+                if (data.profileImageUrl) {
+                    setImagePreview(data.profileImageUrl);
+                }
             } catch (error) {
                 console.error("Error fetching profile: ", error);
             }
@@ -40,25 +49,103 @@ function EditProfile() {
         setProfile((prevProfile) => ({
             ...prevProfile,
             [name]: value,
-        }))
-    }
+        }));
+    };
+
+    const uploadToCloudinary = async (file) => {
+        if (!file) {
+            throw new Error("No file selected for upload");
+        }
+    
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "ml_default");
+        return toast.promise(
+            fetch(
+                `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            ).then((res) => {
+                if (!res.ok) {
+                    return res.json().then((error) => {
+                        throw new Error(error.error.message || "Failed to upload image");
+                    });
+                }
+                return res.json();
+            }).then((data) => {
+                return data.secure_url;
+            }),
+            {
+                loading: 'Uploading Profile...',
+                success: 'Profile Upload Success!',
+                error: 'Upload Profile Error'
+            }
+        );
+    };
+    
+    
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setProfileImage(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
+    const validateProfile = () => {
+        const requiredFields = [
+            { name: 'firstname', label: 'firstname' },
+            { name: 'lastname', label: 'lastname' },
+            { name: 'gender', label: 'gender' },
+            { name: 'phone', label: 'phone' }
+        ];
+
+        for (let field of requiredFields) {
+            if (!profile[field.name] || profile[field.name].trim() === '') {
+                toast.error(`Please fill the ${field.label}`);
+                return false;
+            }
+        }
+        return true;
+    };
 
     const toggleProfile = async () => {
         if (isEditing) {
+            if (!validateProfile()) {
+                return;
+            }
+
             try {
+                let imageUrl = profile.profileImageUrl;
+                if (profileImage) {
+                    imageUrl = await uploadToCloudinary(profileImage);
+                }
                 const res = await fetch("http://localhost:8080/api/auth/edit-profile", {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     credentials: "include",
-                    body: JSON.stringify(profile),
+                    body: JSON.stringify({
+                        ...profile,
+                        profileImageUrl: imageUrl,
+                    }),
                 });
                 if (res.ok) {
                     const updatedProfile = await res.json();
                     setProfile(updatedProfile);
+                    toast.success("Update Profile Sucessfully!",{
+                        duration:2000,
+                    });
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                    if (updatedProfile.profileImageUrl) {
+                        setImagePreview(updatedProfile.profileImageUrl);
+                    }
                     console.log("Profile updated successfully");
-                    window.location.reload();
                 }
             } catch (error) {
                 console.error("Error updating profile: ", error);
@@ -67,64 +154,86 @@ function EditProfile() {
         setIsEditing(!isEditing);
     };
 
+    const triggerImageUpload = () => {
+        if (isEditing && imageInputRef) {
+            imageInputRef.click();
+        }
+    };
+
     return (
         <div className="container mx-auto px-4 py-8 max-w-4xl">
             <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-12">
-                {/* Profile Picture */}
-                <div className="flex flex-col items-center">
-                    <Image
-                        src='/profilePic.jpg'
-                        width={250}
-                        height={250}
-                        alt='Profile'
-                        className='rounded-full object-cover '
+                <div className="relative flex flex-col items-center">
+                    <div className="relative">
+                        <Image
+                            src={imagePreview || '/profilePic.jpg'}
+                            width={230}
+                            height={170}
+                            alt="Profile"
+                            className="rounded-full object-cover w-[230px] h-[170px]"
+                            priority
+                        />
+                        {isEditing && (
+                            <button 
+                                onClick={triggerImageUpload} 
+                                className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors"
+                            >
+                                <Pencil size={24} />
+                            </button>
+                        )}
+                    </div>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        ref={(input) => setImageInputRef(input)}
+                        className="hidden"
+                        onChange={handleImageUpload}
                     />
-                    <button 
-                        onClick={toggleProfile} 
+                    <button
+                        onClick={toggleProfile}
                         className={`mt-6 w-full px-6 py-3 rounded-xl text-xl font-semibold transition-colors duration-300 ${
-                            isEditing 
-                                ? "bg-green-600 text-white hover:bg-green-700" 
+                            isEditing
+                                ? "bg-green-600 text-white hover:bg-green-700"
                                 : "bg-gray-500 text-white hover:bg-gray-600"
-                        }`}>
+                        }`}
+                    >
                         {isEditing ? "บันทึกโปรไฟล์" : "แก้ไขโปรไฟล์ของคุณ"}
                     </button>
                 </div>
-
-                {/* Profile Details */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                     <div>
-                        <label htmlFor="firstname" className='block text-xl font-medium text-gray-700 mb-2'>
+                        <label htmlFor="firstname" className="block text-xl font-medium text-gray-700 mb-2">
                             ชื่อจริง
                         </label>
                         <input
-                            id='firstname'
-                            name='firstname' 
+                            id="firstname"
+                            name="firstname"
                             type="text"
                             value={profile.firstname}
                             onChange={handleChange}
                             readOnly={!isEditing}
                             className={`w-full px-4 py-3 border rounded-lg text-lg ${
-                                isEditing 
-                                    ? "border-blue-500 focus:ring-2 focus:ring-blue-200" 
+                                isEditing
+                                    ? "border-blue-500 focus:ring-2 focus:ring-blue-200"
                                     : "bg-gray-100 border-gray-300 cursor-default"
                             }`}
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="lastname" className='block text-xl font-medium text-gray-700 mb-2'>
+                        <label htmlFor="lastname" className="block text-xl font-medium text-gray-700 mb-2">
                             นามสกุล
                         </label>
-                        <input 
-                            id='lastname'
-                            name='lastname'
+                        <input
+                            id="lastname"
+                            name="lastname"
                             type="text"
                             value={profile.lastname}
                             onChange={handleChange}
                             readOnly={!isEditing}
                             className={`w-full px-4 py-3 border rounded-lg text-lg ${
-                                isEditing 
-                                    ? "border-blue-500 focus:ring-2 focus:ring-blue-200" 
+                                isEditing
+                                    ? "border-blue-500 focus:ring-2 focus:ring-blue-200"
                                     : "bg-gray-100 border-gray-300 cursor-default"
                             }`}
                         />
@@ -141,8 +250,8 @@ function EditProfile() {
                             onChange={handleChange}
                             disabled={!isEditing}
                             className={`w-full px-4 py-3 border rounded-lg text-lg ${
-                                isEditing 
-                                    ? "border-blue-500 focus:ring-2 focus:ring-blue-200" 
+                                isEditing
+                                    ? "border-blue-500 focus:ring-2 focus:ring-blue-200"
                                     : "bg-gray-100 border-gray-300 cursor-default"
                             }`}
                         >
@@ -164,8 +273,8 @@ function EditProfile() {
                             onChange={handleChange}
                             readOnly={!isEditing}
                             className={`w-full px-4 py-3 border rounded-lg text-lg ${
-                                isEditing 
-                                    ? "border-blue-500 focus:ring-2 focus:ring-blue-200" 
+                                isEditing
+                                    ? "border-blue-500 focus:ring-2 focus:ring-blue-200"
                                     : "bg-gray-100 border-gray-300 cursor-default"
                             }`}
                         />
@@ -175,9 +284,7 @@ function EditProfile() {
                         <label htmlFor="email" className="block text-xl font-medium text-gray-700 mb-2">
                             E-mail
                         </label>
-                        <p>
-                            {profile.email}
-                        </p>
+                        <p>{profile.email}</p>
                     </div>
                     <div>
                         <button className='border p-4 rounded-xl w-72 hover:bg-slate-300 transition duration-300'><Link href="https://billing.stripe.com/p/login/test_00gdTj1znbAtaTSdQQ">Billing portal</Link></button>
@@ -185,8 +292,8 @@ function EditProfile() {
                 </div>
             </div>
         </div>
-    )
+
+    );
 }
 
-export default EditProfile
-
+export default EditProfile;

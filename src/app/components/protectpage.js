@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import toast from 'react-hot-toast';
 
 const ProtectedPage = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(null); // null = รอการตรวจสอบ
@@ -35,7 +36,12 @@ const ProtectedPage = ({ children }) => {
                 console.log("user login sucess");
                 setIsDialogOpen(false);
                 checkSession();
-                window.location.reload();
+                toast.success("Login successfully!",{
+                    duration:2000,
+                });
+                setTimeout(() => {
+                    window.location.reload(); 
+                }, 1000);
             }
         }catch(error){
             console.error("error:" ,error);
@@ -50,7 +56,10 @@ const ProtectedPage = ({ children }) => {
                 credentials: 'include',
             });
             setIsLoggedIn(res.ok);
-            setIsDialogOpen(!res.ok); 
+            setIsDialogOpen(!res.ok);
+            if(!res.ok){
+                toast.error("You need to Login first!");
+            }
         } catch (error) {
             console.error('Session check error:', error);
             setIsLoggedIn(false);

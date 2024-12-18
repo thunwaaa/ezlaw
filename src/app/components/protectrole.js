@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ProtectedPage from './protectpage';
+import toast from 'react-hot-toast';
 
 const MembershipPage = ({ children }) => {
     const router = useRouter();
@@ -19,16 +20,14 @@ const MembershipPage = ({ children }) => {
                     
                     if (data.role !== 'Membership') {
                         router.push('/planMember');
+                        toast.error("You need to subscribe first!");
                     }
                 }else if(data.role !== 'Lawyer'){
                     router.push('/planMember');
+                    toast.error("You need to subscribe first!");
                 } 
-                else {
-                    router.push('/');
-                }
             } catch (error) {
                 console.error('Role check error:', error);
-                router.push('/');
             }
         };
 

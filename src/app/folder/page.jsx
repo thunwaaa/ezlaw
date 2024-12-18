@@ -115,7 +115,7 @@ export default function Folder(){
 
     return(
 
-                <MembershipPage>
+        <MembershipPage>
             
             <main className="container mx-auto my-3 mt-10">
 

@@ -3,6 +3,7 @@ import Content1 from "./components/Content1";
 import Foot from "./components/footer/Foot";
 import MembershipPage from "./components/protectrole";
 import ProtectedPage from "./components/protectpage";
+import { Toaster } from "react-hot-toast";
 
 
 export default function Home() {
@@ -15,7 +16,7 @@ export default function Home() {
               <p className='text-center'>Flashcard <br /> ตัวช่วยในการเรียน</p></Link>
       </div>
       
-      
+      <Toaster />
       <Foot />
     </div>
   );
