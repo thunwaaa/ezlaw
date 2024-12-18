@@ -17,15 +17,13 @@ const MembershipPage = ({ children }) => {
 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(data.role);
                     
-                    if (data.role !== 'Membership') {
+                    if (data.role === "user") {
                         router.push('/planMember');
                         toast.error("You need to subscribe first!");
                     }
-                }else if(data.role !== 'Lawyer'){
-                    router.push('/planMember');
-                    toast.error("You need to subscribe first!");
-                } 
+                }
             } catch (error) {
                 console.error('Role check error:', error);
             }

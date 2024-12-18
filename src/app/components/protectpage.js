@@ -71,10 +71,18 @@ const ProtectedPage = ({ children }) => {
         checkSession();
     }, [router.pathname]);
 
+    
+    const handleDialogClose = (open) => {
+        setIsDialogOpen(open);
+        if (!open && !isLoggedIn) {
+            router.push("/");
+        }
+    };
+ 
     return (
         <>
             {children} {/* Render เนื้อหาของหน้า */}
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
                 <DialogContent>
                     <DialogTitle>You need to log in</DialogTitle>
                     <form onSubmit={loginSubmit} className="space-y-4">
