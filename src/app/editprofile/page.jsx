@@ -1,9 +1,13 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link';
-import { Pencil } from 'lucide-react'
+import { Pencil, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 function EditProfile() {
     const [isEditing, setIsEditing] = useState(false);
@@ -19,6 +23,9 @@ function EditProfile() {
     const [profileImage, setProfileImage] = useState(null); 
     const [imagePreview, setImagePreview] = useState('/profilePic.jpg');
     const [imageInputRef, setImageInputRef] = useState(null);
+    const [password,setPassword] = useState(null);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -160,6 +167,37 @@ function EditProfile() {
         }
     };
 
+    const deleteuser = async () => {
+        if (!password) {
+            toast.error("Please enter your password");
+            return;
+        }
+
+        try {
+            const res = await fetch("http://localhost:8080/api/auth/delete", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ password }),
+                credentials: "include",
+            });
+
+            if (res.ok) {
+                toast.success("Delete Account successfully!");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+                setIsDeleteDialogOpen(false);
+                router.push("/");
+            } else {
+                toast.error("Invalid password");
+            }
+        } catch (error) {
+            console.error("Error deleting user:", error);
+            toast.error("Failed to delete account");
+        }
+    };
     return (
         <div className="container mx-auto px-4 py-8 max-w-4xl">
             <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-12">
@@ -191,14 +229,47 @@ function EditProfile() {
                     />
                     <button
                         onClick={toggleProfile}
-                        className={`mt-6 w-full px-6 py-3 rounded-xl text-xl font-semibold transition-colors duration-300 ${
+                        className={`mt-6 w-40 px-4 py-2 rounded-md text-lg font-semibold transition-colors duration-300 ${
                             isEditing
                                 ? "bg-green-600 text-white hover:bg-green-700"
                                 : "bg-gray-500 text-white hover:bg-gray-600"
                         }`}
                     >
-                        {isEditing ? "บันทึกโปรไฟล์" : "แก้ไขโปรไฟล์ของคุณ"}
+                        {isEditing ? "บันทึกโปรไฟล์" : "แก้ไขโปรไฟล์"}
                     </button>
+                    <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="destructive" className="flex items-center gap-2 mt-3 w-40 ">
+                                    <Trash2 size={20} />
+                                    Delete Account
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Delete Account</DialogTitle>
+                                    <DialogDescription>
+                                        This action cannot be undone. Please enter your password to confirm account deletion.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="py-4">
+                                    <Input
+                                        type="password"
+                                        placeholder="Enter your password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="w-full"
+                                    />
+                                </div>
+                                <DialogFooter>
+                                    <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                                        Cancel
+                                    </Button>
+                                    <Button variant="destructive" onClick={deleteuser}>
+                                        Delete Account
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                     <div>
