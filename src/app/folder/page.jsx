@@ -8,6 +8,7 @@ import ProtectedPage from "app/components/protectpage";
 import { CgAdd } from "react-icons/cg";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { MdEditSquare } from "react-icons/md";
+import toast from "react-hot-toast";
 
 export default function Folder(){
 
@@ -185,6 +186,16 @@ export default function Folder(){
         }
     };
 
+    const checkfolders = async () => {
+        if(folderData.length == 0 ){
+            toast.error("You do not have any folders");
+        }
+    };
+
+    useEffect(() => {
+        checkfolders();
+    },[]);
+
     return(
 
         <MembershipPage>
@@ -269,7 +280,7 @@ export default function Folder(){
                             // </Link>
                         ))
                     ) : (
-                        <p className="bg-gray-300 p-3 my-3 rounded-md">You do not have any folders yet.</p>
+                            <p className=" p-3 my-3 rounded-md">You do not have any folders yet.</p>
                     )}
                 </div>
 
